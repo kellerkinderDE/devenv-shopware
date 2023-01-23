@@ -1,5 +1,7 @@
 # Kellerkinder devenv
 
+
+
 ## Setup
 Copy all files from the example folder into a project and enter it (assuming you have direnv installed). Run `direnv allow` if it asks you to.
 
@@ -23,3 +25,6 @@ needs to be adjusted when using a lower version.
 - php80
 - php81
 - php82
+
+## License
+MIT

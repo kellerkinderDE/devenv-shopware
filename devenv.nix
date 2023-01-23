@@ -4,7 +4,7 @@ let
   phpVersion = "php81";
 
   phpConfig = ''
-    date.timezone = UTC
+    date.timezone = Europe/Berlin
     memory_limit = 2G
     pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
     mysqli.default_socket = ''${MYSQL_UNIX_PORT}
@@ -13,6 +13,7 @@ let
     session.gc_probability = 0
     session.save_handler = redis
     session.save_path = "tcp://127.0.0.1:6379/0"
+    redis.session.locking_enabled = 1
     display_errors = On
     display_startup_errors = true
     error_reporting = E_ALL
@@ -155,7 +156,7 @@ in {
   ];
 
   languages.javascript.enable = true;
-  languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
+  languages.javascript.package = lib.mkDefault pkgs.nodejs-18_x;
   env.NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
 
   languages.php.enable = true;
@@ -266,9 +267,6 @@ in {
   env.CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
   env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
   env.DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
-
-  # Prevent PHPStan errors
-  env.PHPSTAN_ALLOW_XDEBUG = 1;
 
   # Processes
   processes.entryscript.exec = "${entryScript}";
