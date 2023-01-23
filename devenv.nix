@@ -222,7 +222,6 @@ in {
   };
 
   services.mysql.enable = true;
-  services.mysql.package = pkgs.mariadb;
   services.mysql.initialDatabases = lib.mkDefault [{ name = "shopware"; }];
   services.mysql.ensureUsers = lib.mkDefault [
     {
