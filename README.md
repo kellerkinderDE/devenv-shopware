@@ -18,7 +18,7 @@ tightly tailored to the needs of our team members working on various projects wi
 ### Setup
 Copy all files from the example folder into a project and enter it (assuming you have direnv installed). Run `direnv allow` if it asks you to.
 
-Make sure to run following command to speed the startup process:
+Make sure to run the following command to accelerate the startup process:
 ```bash
 cachix use devenv ; cachix use fossar ; cachix use shopware
 ```
