@@ -1,0 +1,23 @@
+# http://editorconfig.org/
+
+# This is the top-most .editorconfig file; do not search in parent directories.
+root = true
+
+# All files.
+[*]
+end_of_line = lf
+indent_style = space
+indent_size = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.yml]
+indent_size = 2
+
+[*.nix]
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
