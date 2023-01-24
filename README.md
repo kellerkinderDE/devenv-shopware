@@ -1,11 +1,11 @@
 # Kellerkinder devenv
 
-devenv provides a reproducible and declarative local development enviroment for our shopware projects. 
-It uses the nix package system to provide native packages for all our required services. This environemt is
-tightly tailored to the needs of our team members working on various projects with shopware.
+devenv provides a reproducible and declarative local development environment for our [Shopware](https://www.shopware.com) projects.
+It uses the nix package system to provide native packages for all our required services. This environment is
+tightly tailored to the needs of our team members working on various projects with [Shopware 6](https://www.shopware.com).
 
 ### Notable Features:
-- Overrides shopwares default mailer configuration to use mailhog
+- Overrides Shopware's default mailer configuration to use [MailHog](https://github.com/mailhog/MailHog)
 - Provides helper functions to clear caches
 - Enables XDebug without a performance impact when not using it
 - Easily configurable PHP Version
