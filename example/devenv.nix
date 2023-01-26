@@ -1,7 +1,8 @@
 { pkgs, config, inputs, lib, ... }:
 
 let
-  phpVersion = "php81";
+  phpVersion = config.env.PHP_VERSION;
 in
 {
+  env.PHP_VERSION = "php74";
 }

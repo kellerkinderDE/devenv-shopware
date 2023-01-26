@@ -1,7 +1,7 @@
 { pkgs, config, inputs, lib, ... }:
 
 let
-  phpVersion = "php81";
+  phpVersion = config.env.PHP_VERSION;
 
   phpConfig = ''
     date.timezone = Europe/Berlin
@@ -37,7 +37,7 @@ let
   '';
 
   phpPackage = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis blackfire ];
+    extensions = { all, enabled }: with all; enabled ++ [ redis ];
     extraConfig = phpConfig;
   };
 
