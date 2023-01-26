@@ -150,6 +150,8 @@ let
     echo Uuid::randomHex();
   '';
 in {
+  env.PHP_VERSION = lib.mkDefault "php81";
+
   packages = [
     pkgs.jq
     pkgs.gnupatch
