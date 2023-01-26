@@ -44,11 +44,6 @@ let
     extraConfig = phpConfig;
   };
 
-  requiredFiles = [
-    ".env"
-    "install.lock"
-  ];
-
   entryScript = pkgs.writeScript "entryScript" ''
     PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
 
@@ -58,14 +53,7 @@ let
 
     ${updateConfig} core.mailerSettings.emailAgent ""
 
-    for FILE in ${lib.escapeShellArgs requiredFiles}; do
-    echo -e $FILE
-      if ! test -f "$FILE"; then
-        touch $FILE
-      fi
-    done
-
-    echo -e "\nStartup completed"
+    echo -e "Startup completed"
 
     sleep infinity
   '';
