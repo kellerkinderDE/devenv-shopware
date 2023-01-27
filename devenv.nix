@@ -1,6 +1,8 @@
 { pkgs, config, inputs, lib, ... }:
 
 let
+  phpVersion = config.env.PHP_VERSION;
+
   phpConfig = ''
     date.timezone = Europe/Berlin
     memory_limit = 2G
@@ -34,12 +36,12 @@ let
     xdebug.var_display_max_children = -1
   '';
 
-  phpPackage = inputs.phps.packages.${builtins.currentSystem}.${config.env.PHP_VERSION}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis blackfire ];
+  phpPackage = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
+    extensions = { all, enabled }: with all; enabled ++ [ redis ] ++ (lib.optional config.services.blackfire.enable blackfire);
     extraConfig = phpConfig;
   };
 
-  phpXdebug = inputs.phps.packages.${builtins.currentSystem}.${config.env.PHP_VERSION}.buildEnv {
+  phpXdebug = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
     extensions = { all, enabled }: with all; enabled ++ [ redis xdebug ];
     extraConfig = phpConfig;
   };

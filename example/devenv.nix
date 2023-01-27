@@ -1,3 +1,3 @@
 {
-  env.PHP_VERSION = "php81";
+  env.PHP_VERSION = "php74";
 }
