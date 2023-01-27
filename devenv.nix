@@ -284,6 +284,6 @@ in {
   scripts.uuid.exec = "${uuidHelper}";
 
   scripts.debug.exec = ''
-    XDEBUG_SESSION=1 ${phpXdebug}/bin/php $1
+    XDEBUG_SESSION=1 ${phpXdebug}/bin/php "$@"
   '';
 }
