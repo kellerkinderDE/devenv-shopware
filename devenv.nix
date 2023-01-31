@@ -158,7 +158,7 @@ in {
   ];
 
   languages.javascript.enable = true;
-  languages.javascript.package = lib.mkDefault pkgs.nodejs-18_x;
+  languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
   env.NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
 
   languages.php.enable = true;
