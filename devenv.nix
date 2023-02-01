@@ -285,7 +285,7 @@ in {
     '';
 
     scripts.uuid.exec = ''
-      echo uuidgen | tr "[:upper:]" "[:lower:]" | sed 's/-//g'
+      uuidgen | tr "[:upper:]" "[:lower:]" | sed 's/-//g'
     '';
 
     scripts.debug.exec = ''
