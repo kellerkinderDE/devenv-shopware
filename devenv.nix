@@ -63,9 +63,13 @@ let
       sleep 1
     done
 
+    # additional config
     ${lib.concatMapStrings ({ name, value }: ''
-      echo ${name} "${lib.escapeShellArg value}"
+      ${updateConfig} ${name} "${lib.escapeShellArg value}"
     '') entries}
+
+    # default config
+    ${updateConfig} core.mailerSettings.emailAgent ""
 
     echo -e "Startup completed"
 
@@ -130,9 +134,10 @@ in {
 
     systemConfig = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      description = "shopware config settings";
-      default = {
-        "core.mailerSettings.emailAgent" = "";
+      description = "shopware system config settings";
+      default = { };
+      example = {
+        "foo.bar.testString" = "false";
       };
     };
   };
