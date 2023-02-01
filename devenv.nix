@@ -1,18 +1,19 @@
 { pkgs, config, inputs, lib, ... }:
 
 let
-  phpVersion = config.env.PHP_VERSION;
+  cfg = config.kellerkinder;
 
   phpConfig = ''
-    date.timezone = Europe/Berlin
     memory_limit = 2G
     pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
     mysqli.default_socket = ''${MYSQL_UNIX_PORT}
     blackfire.agent_socket = "${config.services.blackfire.socket}";
     realpath_cache_ttl = 3600
     session.gc_probability = 0
+    ${lib.strings.optionalString config.services.redis.enable ''
     session.save_handler = redis
     session.save_path = "tcp://127.0.0.1:6379/0"
+    ''}
     redis.session.locking_enabled = 1
     display_errors = On
     display_startup_errors = true
@@ -36,18 +37,24 @@ let
     xdebug.var_display_max_children = -1
   '';
 
+  phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
+
   phpPackage = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis ]
+    extensions = { all, enabled }: with all; enabled
+      ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp);
     extraConfig = phpConfig;
   };
 
   phpXdebug = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis xdebug ]
+    extensions = { all, enabled }: with all; enabled ++ [ xdebug ]
+      ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp);
     extraConfig = phpConfig;
   };
+
+  entries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
 
   entryScript = pkgs.writeScript "entryScript" ''
     PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
@@ -56,7 +63,9 @@ let
       sleep 1
     done
 
-    ${updateConfig} core.mailerSettings.emailAgent ""
+    ${lib.concatMapStrings ({ name, value }: ''
+      echo ${name} "${lib.escapeShellArg value}"
+    '') entries}
 
     echo -e "Startup completed"
 
@@ -105,187 +114,177 @@ let
 
     exit(0);
   '';
-
-  uuidHelper = pkgs.writeScript "uuid" ''
-    #!/usr/bin/env php
-    <?php declare(strict_types=1);
-
-    class Uuid
-    {
-      public static function randomHex(): string
-      {
-        $hex = bin2hex(random_bytes(16));
-        $timeHi = self::applyVersion(mb_substr($hex, 12, 4), 4);
-        $clockSeqHi = self::applyVariant(hexdec(mb_substr($hex, 16, 2)));
-        return sprintf(
-          "%08s%04s%04s%02s%02s%012s",
-          // time low
-          mb_substr($hex, 0, 8),
-          // time mid
-          mb_substr($hex, 8, 4),
-          // time high and version
-          str_pad(dechex($timeHi), 4, "0", STR_PAD_LEFT),
-          // clk_seq_hi_res
-          str_pad(dechex($clockSeqHi), 2, "0", STR_PAD_LEFT),
-          // clock_seq_low
-          mb_substr($hex, 18, 2),
-          // node
-          mb_substr($hex, 20, 12)
-        );
-      }
-      private static function applyVersion(string $timeHi, int $version): int
-      {
-        $timeHi = hexdec($timeHi) & 0x0fff;
-        $timeHi &= ~(0xf000);
-        $timeHi |= $version << 12;
-        return $timeHi;
-      }
-      private static function applyVariant(int $clockSeqHi): int
-      {
-        // Set the variant to RFC 4122
-        $clockSeqHi &= 0x3f;
-        $clockSeqHi &= ~(0xc0);
-        $clockSeqHi |= 0x80;
-        return $clockSeqHi;
-      }
-    }
-
-    echo Uuid::randomHex();
-  '';
 in {
-  env.PHP_VERSION = lib.mkDefault "php81";
+  options.kellerkinder = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Kellerkinder devenv";
+    };
 
-  packages = [
-    pkgs.jq
-    pkgs.gnupatch
-  ];
+    phpVersion = lib.mkOption {
+      type = lib.types.str;
+      default = "php81";
+      description = "PHP Version";
+    };
 
-  languages.javascript.enable = true;
-  languages.javascript.package = lib.mkDefault pkgs.nodejs-18_x;
-  env.NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
-
-  languages.php.enable = true;
-  languages.php.package = lib.mkDefault phpPackage;
-
-  languages.php.fpm.pools.web = {
-    settings = {
-      "clear_env" = "no";
-      "pm" = "dynamic";
-      "pm.max_children" = 10;
-      "pm.start_servers" = 2;
-      "pm.min_spare_servers" = 1;
-      "pm.max_spare_servers" = 10;
+    systemConfig = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      description = "shopware config settings";
+      default = {
+        "core.mailerSettings.emailAgent" = "";
+      };
     };
   };
-  languages.php.fpm.pools.web.phpPackage = lib.mkDefault phpPackage;
 
-  languages.php.fpm.pools.xdebug = {
-    settings = {
-      "clear_env" = "no";
-      "pm" = "dynamic";
-      "pm.max_children" = 10;
-      "pm.start_servers" = 2;
-      "pm.min_spare_servers" = 1;
-      "pm.max_spare_servers" = 10;
+  config = lib.mkIf cfg.enable {
+    packages = [
+      pkgs.jq
+      pkgs.gnupatch
+    ];
+
+    languages.javascript.enable = true;
+    languages.javascript.package = lib.mkDefault pkgs.nodejs-18_x;
+
+    languages.php.enable = true;
+    languages.php.package = lib.mkDefault phpPackage;
+
+    languages.php.fpm.pools.web = {
+      settings = {
+        "clear_env" = "no";
+        "pm" = "dynamic";
+        "pm.max_children" = 10;
+        "pm.start_servers" = 2;
+        "pm.min_spare_servers" = 1;
+        "pm.max_spare_servers" = 10;
+      };
     };
-  };
-  languages.php.fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
+    languages.php.fpm.pools.web.phpPackage = lib.mkDefault phpPackage;
 
-  services.caddy.enable = true;
-  services.caddy.config = "{
-    auto_https disable_redirects
-  }";
-  services.caddy.virtualHosts."127.0.0.1:8000" = {
-    extraConfig = ''
-      @default {
-        not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
-        not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+    languages.php.fpm.pools.xdebug = {
+      settings = {
+        "clear_env" = "no";
+        "pm" = "dynamic";
+        "pm.max_children" = 10;
+        "pm.start_servers" = 2;
+        "pm.min_spare_servers" = 1;
+        "pm.max_spare_servers" = 10;
+      };
+    };
+    languages.php.fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
+
+    services.caddy.enable = true;
+    services.caddy.config = "{
+      auto_https disable_redirects
+    }";
+    services.caddy.virtualHosts."127.0.0.1:8000" = {
+      extraConfig = ''
+        @default {
+          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+        }
+
+        @debugger {
+          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+        }
+
+        tls internal
+
+        root * public
+
+        php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
+        php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
+
+        encode zstd gzip
+
+        file_server
+
+        log {
+          output stderr
+          format console
+          level ERROR
+        }
+      '';
+    };
+
+    services.mysql.enable = true;
+    services.mysql.initialDatabases = lib.mkDefault [{ name = "shopware"; }];
+    services.mysql.ensureUsers = lib.mkDefault [
+      {
+        name = "shopware";
+        password = "shopware";
+        ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
       }
+    ];
+    services.mysql.settings = {
+      mysql = {
+        user = "shopware";
+        password = "shopware";
+      };
+      mysqldump = {
+        user = "shopware";
+        password = "shopware";
+      };
+      mysqladmin = {
+        user = "shopware";
+        password = "shopware";
+      };
+    };
 
-      @debugger {
-        not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
-        expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-      }
+    services.redis.enable = lib.mkDefault true;
 
-      tls internal
+    services.adminer.enable = lib.mkDefault true;
+    services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
 
-      root * public
+    services.mailhog.enable = true;
 
-      php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
-      php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
+    # services.elasticsearch.enable = true;
+    # services.rabbitmq.enable = true;
+    # services.rabbitmq.managementPlugin.enable = true;
 
-      encode zstd gzip
+    # Environment variables
+    env = lib.mkMerge [
+      (lib.mkIf cfg.enable {
+        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
+        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-      file_server
+        APP_URL = lib.mkDefault "https://127.0.0.1:8000";
+        CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
 
-      log {
-        output stderr
-        format console
-        level ERROR
-      }
+        APP_SECRET = lib.mkDefault "devsecret";
+
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
+        DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
+
+        NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
+      })
+      (lib.mkIf config.services.elasticsearch.enable {
+        SHOPWARE_ES_ENABLED = "true";
+        SHOPWARE_ES_INDEXING_ENABLED = "true";
+        SHOPWARE_ES_HOSTS = "127.0.0.1";
+      })
+    ];
+
+    # Processes
+    processes.entryscript.exec = "${entryScript}";
+
+    # Symfony related scripts
+    scripts.cc.exec = ''
+      CONSOLE=${config.env.DEVENV_ROOT}/bin/console
+
+      if test -f "$CONSOLE"; then
+          exec $CONSOLE cache:clear
+      fi
+    '';
+
+    scripts.uuid.exec = ''
+      echo uuidgen | tr "[:upper:]" "[:lower:]" | sed 's/-//g'
+    '';
+
+    scripts.debug.exec = ''
+      XDEBUG_SESSION=1 ${phpPackage}/bin/php "$@"
     '';
   };
-
-  services.mysql.enable = true;
-  services.mysql.initialDatabases = lib.mkDefault [{ name = "shopware"; }];
-  services.mysql.ensureUsers = lib.mkDefault [
-    {
-      name = "shopware";
-      password = "shopware";
-      ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
-    }
-  ];
-  services.mysql.settings = {
-    mysql = {
-      user = "shopware";
-      password = "shopware";
-    };
-    mysqldump = {
-      user = "shopware";
-      password = "shopware";
-    };
-    mysqladmin = {
-      user = "shopware";
-      password = "shopware";
-    };
-  };
-
-  services.redis.enable = true;
-
-  services.adminer.enable = lib.mkDefault true;
-  services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
-
-  services.mailhog.enable = true;
-
-  # services.elasticsearch.enable = true;
-  # services.rabbitmq.enable = true;
-  # services.rabbitmq.managementPlugin.enable = true;
-
-  # Environment variables
-  env.DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
-  env.MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-  env.MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-  env.APP_URL = lib.mkDefault "https://127.0.0.1:8000";
-  env.APP_SECRET = lib.mkDefault "devsecret";
-  env.CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
-  env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
-  env.DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
-
-  # Processes
-  processes.entryscript.exec = "${entryScript}";
-
-  # Symfony related scripts
-  scripts.cc.exec = ''
-    CONSOLE=${config.env.DEVENV_ROOT}/bin/console
-
-    if test -f "$CONSOLE"; then
-        exec $CONSOLE cache:clear
-    fi
-  '';
-
-  scripts.uuid.exec = "${uuidHelper}";
-
-  scripts.debug.exec = ''
-    XDEBUG_SESSION=1 ${phpXdebug}/bin/php "$@"
-  '';
 }
