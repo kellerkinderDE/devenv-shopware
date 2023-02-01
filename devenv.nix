@@ -37,12 +37,15 @@ let
   '';
 
   phpPackage = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis ] ++ (lib.optional config.services.blackfire.enable blackfire);
+    extensions = { all, enabled }: with all; enabled ++ [ redis ]
+      ++ (lib.optional config.services.blackfire.enable blackfire)
+      ++ (lib.optional config.services.rabbitmq.enable amqp);
     extraConfig = phpConfig;
   };
 
   phpXdebug = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ redis xdebug ];
+    extensions = { all, enabled }: with all; enabled ++ [ redis xdebug ]
+      ++ (lib.optional config.services.rabbitmq.enable amqp);
     extraConfig = phpConfig;
   };
 
