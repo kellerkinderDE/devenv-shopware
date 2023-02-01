@@ -256,7 +256,6 @@ in {
   services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
 
   services.mailhog.enable = true;
-  services.mailhog.uiListenAddress = lib.mkDefault "127.0.0.1:8025";
 
   # services.elasticsearch.enable = true;
   # services.rabbitmq.enable = true;
