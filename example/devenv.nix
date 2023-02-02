@@ -1,5 +1,6 @@
 { pkgs, config, inputs, lib, ... }:
 
 {
-  env.PHP_VERSION = "php74";
+  kellerkinder.phpVersion = "php80";
+  service.elasticserach.enable = true;
 }

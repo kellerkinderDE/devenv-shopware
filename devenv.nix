@@ -122,7 +122,7 @@ in {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Kellerkinder devenv";
+      description = "Enables the Kellerkinder devenv environment";
     };
 
     phpVersion = lib.mkOption {
@@ -223,7 +223,7 @@ in {
           format console
           level ERROR
         }
-      '' additionalCaddyVhostConfig];
+      '' cfg.additionalCaddyVhostConfig];
     };
 
     services.mysql.enable = true;
