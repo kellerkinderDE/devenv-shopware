@@ -28,7 +28,6 @@ let
     opcache.enabled = 1
     zend.assertions = 0
     short_open_tag = 0
-    zend.detect_unicode = 0
     xdebug.mode = "debug"
     xdebug.start_with_request = "trigger"
     xdebug.discover_client_host = 1
@@ -237,6 +236,14 @@ in {
       }
     ];
     services.mysql.settings = {
+      mysqld = {
+        group_concat_max_len = 2048;
+        key_buffer_size = 16777216;
+        max_allowed_packet = 134217728;
+        sync_binlog = 0;
+        table_open_cache = 1024;
+        log_bin_trust_function_creators = 1;
+      };
       mysql = {
         user = "shopware";
         password = "shopware";
@@ -277,12 +284,15 @@ in {
         PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
         DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
 
+        SHOPWARE_CACHE_ID = "dev";
+
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
       })
       (lib.mkIf config.services.elasticsearch.enable {
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
+        SHOPWARE_ES_THROW_EXCEPTION = "1";
       })
     ];
 
