@@ -2,5 +2,5 @@
 
 {
   kellerkinder.phpVersion = "php80";
-  service.elasticserach.enable = true;
+  service.elasticsearch.enable = true;
 }
