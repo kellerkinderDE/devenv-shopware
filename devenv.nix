@@ -3,7 +3,7 @@
 let
   cfg = config.kellerkinder;
 
-  phpConfig = ''
+  phpConfig = lib.strings.concatStrings [''
     memory_limit = 2G
     pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
     mysqli.default_socket = ''${MYSQL_UNIX_PORT}
@@ -35,7 +35,7 @@ let
     xdebug.var_display_max_depth = -1
     xdebug.var_display_max_data = -1
     xdebug.var_display_max_children = -1
-  '';
+  '' cfg.additionalPhpConfig];
 
   phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
 
@@ -140,6 +140,21 @@ in {
         "foo.bar.testString" = "false";
       };
     };
+
+    additionalPhpConfig = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Additional php.ini configuration";
+      example = ''
+        memory_limit = 0
+      '';
+    };
+
+    additionalCaddyVhostConfig = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Additional caddy vhost configuration";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -183,12 +198,11 @@ in {
       auto_https disable_redirects
     }";
     services.caddy.virtualHosts."127.0.0.1:8000" = {
-      extraConfig = ''
+      extraConfig = lib.strings.concatStrings [''
         @default {
           not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
           not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
-
         @debugger {
           not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
           expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
@@ -210,7 +224,7 @@ in {
           format console
           level ERROR
         }
-      '';
+      '' additionalCaddyVhostConfig];
     };
 
     services.mysql.enable = true;
@@ -266,8 +280,8 @@ in {
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
       })
       (lib.mkIf config.services.elasticsearch.enable {
-        SHOPWARE_ES_ENABLED = "true";
-        SHOPWARE_ES_INDEXING_ENABLED = "true";
+        SHOPWARE_ES_ENABLED = "1";
+        SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
       })
     ];
