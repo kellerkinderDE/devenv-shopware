@@ -289,7 +289,7 @@ in {
 
     services.mailhog.enable = true;
 
-    services.elasticsearch.enable = lib.mkIf cfg.enableElasticSearch  (lib.mkDefault false);
+    services.elasticsearch.enable = cfg.enableElasticSearch;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
