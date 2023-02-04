@@ -156,6 +156,9 @@ in {
       type = lib.types.listOf lib.types.str;
       description = "Additional php extensions";
       default = [ ];
+      example = [
+        "mailparse"
+      ];
     };
 
     additionalCaddyVhostConfig = lib.mkOption {
