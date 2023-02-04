@@ -8,6 +8,6 @@
   kellerkinder.additionalPhpExtensions = [
    "mailparse"
   ];
-  kellerkinder.enableRabbitMq = true;
-  kellerkinder.enableElasticSearch = true;
+  kellerkinder.enableRabbitMq = false;
+  kellerkinder.enableElasticSearch = false;
 }
