@@ -47,7 +47,7 @@ kellerkinder.additionalPhpConfig = ''
 ```
 
 ### kellerkinder.additionalPhpExtensions
-Define additional php extension that are included in php-fpm and php-cli
+Define additional PHP extensions that are included in php-fpm and php-cli
 
 *_Example_*
 ```

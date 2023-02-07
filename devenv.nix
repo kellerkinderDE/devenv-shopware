@@ -154,7 +154,7 @@ in {
 
     additionalPhpExtensions = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "Additional php extensions";
+      description = "Additional PHP extensions";
       default = [ ];
       example = [
         "mailparse"
