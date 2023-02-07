@@ -37,19 +37,22 @@ let
   '' cfg.additionalPhpConfig];
 
   phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
+  package = inputs.phps.packages.${builtins.currentSystem}.${phpVersion};
 
-  phpPackage = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
+  phpPackage = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
-      ++ (lib.optional config.services.rabbitmq.enable amqp);
+      ++ (lib.optional config.services.rabbitmq.enable amqp)
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
     extraConfig = phpConfig;
   };
 
-  phpXdebug = inputs.phps.packages.${builtins.currentSystem}.${phpVersion}.buildEnv {
+  phpXdebug = package.buildEnv {
     extensions = { all, enabled }: with all; enabled ++ [ xdebug ]
       ++ (lib.optional config.services.redis.enable redis)
-      ++ (lib.optional config.services.rabbitmq.enable amqp);
+      ++ (lib.optional config.services.rabbitmq.enable amqp)
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
     extraConfig = phpConfig;
   };
 
@@ -149,10 +152,31 @@ in {
       '';
     };
 
+    additionalPhpExtensions = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "Additional PHP extensions";
+      default = [ ];
+      example = [
+        "mailparse"
+      ];
+    };
+
     additionalCaddyVhostConfig = lib.mkOption {
       type = lib.types.str;
       default = "";
       description = "Additional caddy vhost configuration";
+    };
+
+    enableElasticsearch = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enables Elasticsearch";
+    };
+
+    enableRabbitMq = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enables RabbitMQ";
     };
   };
 
@@ -268,9 +292,10 @@ in {
 
     services.mailhog.enable = true;
 
-    # services.elasticsearch.enable = true;
-    # services.rabbitmq.enable = true;
-    # services.rabbitmq.managementPlugin.enable = true;
+    services.elasticsearch.enable = cfg.enableElasticsearch;
+
+    services.rabbitmq.enable = cfg.enableRabbitMq;
+    services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
 
     # Environment variables
     env = lib.mkMerge [
