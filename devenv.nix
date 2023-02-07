@@ -167,16 +167,16 @@ in {
       description = "Additional caddy vhost configuration";
     };
 
-    enableElasticSearch = lib.mkOption {
+    enableElasticsearch = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Enables ElasticSearch";
+      description = "Enables Elasticsearch";
     };
 
     enableRabbitMq = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Enables RabbitMq";
+      description = "Enables RabbitMQ";
     };
   };
 
@@ -292,7 +292,7 @@ in {
 
     services.mailhog.enable = true;
 
-    services.elasticsearch.enable = cfg.enableElasticSearch;
+    services.elasticsearch.enable = cfg.enableElasticsearch;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
