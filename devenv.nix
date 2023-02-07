@@ -187,7 +187,7 @@ in {
     ];
 
     languages.javascript.enable = true;
-    languages.javascript.package = lib.mkDefault pkgs.nodejs-18_x;
+    languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
 
     languages.php.enable = true;
     languages.php.package = lib.mkDefault phpPackage;
@@ -271,14 +271,17 @@ in {
       mysql = {
         user = "shopware";
         password = "shopware";
+        host = "127.0.0.1";
       };
       mysqldump = {
         user = "shopware";
         password = "shopware";
+        host = "127.0.0.1";
       };
       mysqladmin = {
         user = "shopware";
         password = "shopware";
+        host = "127.0.0.1";
       };
     };
 
