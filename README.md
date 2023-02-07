@@ -47,7 +47,7 @@ kellerkinder.additionalPhpConfig = ''
 ```
 
 ### kellerkinder.additionalPhpExtensions
-Define additional PHP extensions that are included in php-fpm and php-cli
+Define additional PHP extensions that are included in php-fpm and php-cli.
 
 *_Example_*
 ```
@@ -57,7 +57,7 @@ kellerkinder.additionalPhpExtensions = [
 ```
 
 ### kellerkinder.enableRabbitMq
-Enables the RabbitMQ message broker and amqp php extension. Can be used for the symfony message queue.
+Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
 *_Example_*
 ```
@@ -65,19 +65,19 @@ kellerkinder.enableRabbitMq = true;
 ```
 
 ### kellerkinder.enableElasticSearch
-Enables the Elasticsearch search server and configures shopware to use Elasticsearch in additional to the default
+Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
 MySQL search.
 
 *_Example_*
 ```
-kellerkinder.enableElasticSearch = true;
+kellerkinder.enableElasticsearch = true;
 ```
 
 ## Different PHP versions
 
-If you want to use a specific PHP version, you can set the following versions 
+If you want to use a specific PHP version, you can set the following versions
 in your project devenv.nix file. The php.ini configuration is >php80 specific
-and needs to be adjusted when using a lower version. 
+and needs to be adjusted when using a lower version.
 
 - php56
 - php70

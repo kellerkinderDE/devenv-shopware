@@ -9,5 +9,5 @@
    "mailparse"
   ];
   kellerkinder.enableRabbitMq = false;
-  kellerkinder.enableElasticSearch = false;
+  kellerkinder.enableElasticsearch = false;
 }
