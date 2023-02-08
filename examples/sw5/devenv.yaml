@@ -1,0 +1,12 @@
+inputs:
+  kellerkinder:
+    url: path:/Users/awink/Code/k10r/devenv/devenv-shopware
+    flake: false
+  phps:
+    url: github:fossar/nix-phps
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+imports:
+  - kellerkinder
+

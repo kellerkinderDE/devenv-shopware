@@ -178,6 +178,18 @@ in {
       default = false;
       description = "Enables RabbitMQ";
     };
+
+    documentRoot = lib.mkOption {
+      type = lib.types.str;
+      default = "public";
+      description = "Sets the docroot of caddy";
+    };
+
+    defaultMatcherPaths = lib.mkOption {
+      type = lib.types.str;
+      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
+      description = "Sets the matcher paths to be \"ignored\" by caddy";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -223,17 +235,17 @@ in {
     services.caddy.virtualHosts."127.0.0.1:8000" = {
       extraConfig = lib.strings.concatStrings [''
         @default {
-          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          not path ${cfg.defaultMatcherPaths}
           not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
         @debugger {
-          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          not path ${cfg.defaultMatcherPaths}
           expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
 
         tls internal
 
-        root * public
+        root * ${cfg.documentRoot}
 
         php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
         php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
