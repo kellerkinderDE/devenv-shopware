@@ -80,14 +80,14 @@ Changes the default document root (`public`) of caddy to the specified value
 ```
 kellerkinder.documentRoot = ".";
 ```
-### kellerkinder.defaultMatcherPaths
+### kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
 **NOTE**: The path can not be empty!
 
 *_Example_*
 ```
-kellerkinder.defaultMatcherPaths = "myCustomFolder/*";
+kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
 ## Different PHP versions

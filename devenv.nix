@@ -185,7 +185,7 @@ in {
       description = "Sets the docroot of caddy";
     };
 
-    defaultMatcherPaths = lib.mkOption {
+    staticFilePaths = lib.mkOption {
       type = lib.types.str;
       default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
       description = "Sets the matcher paths to be \"ignored\" by caddy";
@@ -235,11 +235,11 @@ in {
     services.caddy.virtualHosts."127.0.0.1:8000" = {
       extraConfig = lib.strings.concatStrings [''
         @default {
-          not path ${cfg.defaultMatcherPaths}
+          not path ${cfg.staticFilePaths}
           not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
         @debugger {
-          not path ${cfg.defaultMatcherPaths}
+          not path ${cfg.staticFilePaths}
           expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
 

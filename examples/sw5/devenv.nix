@@ -11,5 +11,5 @@
     kellerkinder.enableRabbitMq = false;
     kellerkinder.enableElasticsearch = false;
     kellerkinder.documentRoot = ".";
-    kellerkinder.defaultMatcherPaths = "/files/* /media/*";
+    kellerkinder.staticFilePaths = "/files/* /media/*";
 }
