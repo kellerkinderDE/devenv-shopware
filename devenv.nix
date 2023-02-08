@@ -126,6 +126,8 @@ let
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
+    PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
+
     if [[ "$1" == "" ]]; then
         echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
         exit
@@ -164,13 +166,8 @@ let
         exit
     fi
 
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        LANG=C LC_CTYPE=C LC_ALL=C sed -i "" -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
-        LANG=C LC_CTYPE=C LC_ALL=C sed -i "" 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
-    else
-        LANG=C LC_CTYPE=C LC_ALL=C sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
-        LANG=C LC_CTYPE=C LC_ALL=C sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
-    fi
+    LANG=C LC_CTYPE=C LC_ALL=C sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
+    LANG=C LC_CTYPE=C LC_ALL=C sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
 
     MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql shopware -f < "$SQL_FILE"
 
