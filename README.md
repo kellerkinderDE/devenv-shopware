@@ -29,7 +29,7 @@ Add the following files to the project .gitignore file:
 ## Options
 
 ### kellerkinder.phpVersion
-Allows to define the used PHP Version. For supported versions see [Different PHP versions](#Different PHP versions)
+Allows to define the used PHP Version. For supported versions see [Different PHP versions](#different-php-versions)
 
 *_Example_*
 ```
@@ -64,7 +64,7 @@ Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the 
 kellerkinder.enableRabbitMq = true;
 ```
 
-### kellerkinder.enableElasticSearch
+### kellerkinder.enableElasticsearch
 Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
 MySQL search.
 
@@ -73,10 +73,26 @@ MySQL search.
 kellerkinder.enableElasticsearch = true;
 ```
 
+### kellerkinder.importDatabaseDumps
+
+Define the list of links to be imported with command importdb.
+Supported files:
+- *.sql
+- *.sql.gz
+- *.sql.zip
+
+*_Example_*
+```
+kellerkinder.importDatabaseDumps = [
+    "http://localhost/dump.sql.gz"
+    "http://localhost/admin_logins.sql"
+];
+```
+
 ## Different PHP versions
 
 If you want to use a specific PHP version, you can set the following versions
-in your project devenv.nix file. The php.ini configuration is >php80 specific
+in your project `devenv.nix` file. The php.ini configuration is >php80 specific
 and needs to be adjusted when using a lower version.
 
 - php56

@@ -71,11 +71,15 @@ let
     '') entries}
 
     # default config
-    ${updateConfig} core.mailerSettings.emailAgent ""
+    ${scriptResetEmailAgent}
 
     echo -e "Startup completed"
 
     sleep infinity
+  '';
+
+  scriptResetEmailAgent = pkgs.writeScript "scriptResetEmailAgent" ''
+      ${updateConfig} core.mailerSettings.emailAgent ""
   '';
 
   updateConfig = pkgs.writeScript "updateConfig" ''
@@ -119,6 +123,56 @@ let
     echo sprintf("Configuration %s set to %s\n", $key, empty($argv[2]) ? "empty" : $argv[2]);
 
     exit(0);
+  '';
+
+  importDbHelper = pkgs.writeScript "importDbHelper" ''
+    if [[ "$1" == "" ]]; then
+        echo "Please setup ENV DATABASE_DUMP_URL"
+        exit
+    fi
+
+    if ! ${config.services.mysql.package}/bin/mysqladmin ping > /dev/null 2>&1; then
+        echo "Mysql is dead or has gone away! devenv up?"
+        exit
+    fi
+
+    TARGETFOLDER="${config.env.DEVENV_STATE}/importdb"
+
+    rm -rf "$TARGETFOLDER"
+
+    set -e
+
+    if [[ "$1" == *.sql ]]; then
+        curl --create-dirs "$1" --output "$TARGETFOLDER/dump.sql"
+    elif [[ "$1" == *.sql.gz ]]; then
+        curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
+        gunzip -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
+    elif [[ "$1" == *.sql.zip ]]; then
+        curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
+        unzip -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
+    else
+        echo "unsupported file type for file at $1"
+        exit
+    fi
+
+    rm -f "$TARGETFOLDER/latest.sql.zip"
+
+    SQL_FILE=$(find "$TARGETFOLDER" -name "*.sql" | head -n 1)
+
+    if [[ "$SQL_FILE" == "" ]]; then
+        echo "no sql file found"
+        exit
+    fi
+
+    #this seems MAC related?!
+    LC_ALL=C sed -i "" "s/DEFINER=[^*]*\*/\*/g" "$SQL_FILE"
+    LC_ALL=C sed -i "" 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
+
+    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql -u root shopware -f < "$SQL_FILE"
+
+    ${scriptResetEmailAgent}
+
+    echo "Finished!"
   '';
 in {
   options.kellerkinder = {
@@ -178,6 +232,16 @@ in {
       default = false;
       description = "Enables RabbitMQ";
     };
+
+    importDatabaseDumps = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "List of links to be imported with command importdb";
+      default = [ ];
+      example = [
+        "http://localhost/dump.sql.gz"
+        "http://localhost/dump.sql"
+      ];
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -220,7 +284,7 @@ in {
     services.caddy.config = "{
       auto_https disable_redirects
     }";
-    services.caddy.virtualHosts."127.0.0.1:8000" = {
+    services.caddy.virtualHosts."127.0.0.1:8000" = lib.mkDefault {
       extraConfig = lib.strings.concatStrings [''
         @default {
           not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
@@ -342,6 +406,21 @@ in {
 
     scripts.debug.exec = ''
       XDEBUG_SESSION=1 ${phpPackage}/bin/php "$@"
+    '';
+
+    scripts.importdb.exec = ''
+      echo "Are you sure you want to download the file and overwritting database shopware with its data (y/n)?"
+      read answer
+
+      if [[ "$answer" != "y" ]]; then
+          echo "Alright, we will stop here."
+          exit
+      fi
+
+      ${lib.concatMapStrings (dump: ''
+         echo "Importing ${dump}"
+         ${importDbHelper} ${dump}
+      '') cfg.importDatabaseDumps}
     '';
   };
 }
