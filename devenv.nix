@@ -56,8 +56,6 @@ let
     extraConfig = phpConfig;
   };
 
-  entries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
-
   entryScript = pkgs.writeScript "entryScript" ''
     PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
 
@@ -65,21 +63,23 @@ let
       sleep 1
     done
 
-    # additional config
-    ${lib.concatMapStrings ({ name, value }: ''
-      ${updateConfig} ${name} "${lib.escapeShellArg value}"
-    '') entries}
-
-    # default config
-    ${scriptResetEmailAgent}
+    ${scriptUpdateConfig}
 
     echo -e "Startup completed"
 
     sleep infinity
   '';
 
-  scriptResetEmailAgent = pkgs.writeScript "scriptResetEmailAgent" ''
-      ${updateConfig} core.mailerSettings.emailAgent ""
+  systemConfigEntries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
+
+  scriptUpdateConfig = pkgs.writeScript "scriptUpdateConfig" ''
+    # additional config
+    ${lib.concatMapStrings ({ name, value }: ''
+      ${updateConfig} ${name} "${lib.escapeShellArg value}"
+    '') systemConfigEntries}
+
+    # default config
+    ${updateConfig} core.mailerSettings.emailAgent ""
   '';
 
   updateConfig = pkgs.writeScript "updateConfig" ''
@@ -170,7 +170,7 @@ let
 
     MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql -u root shopware -f < "$SQL_FILE"
 
-    ${scriptResetEmailAgent}
+    ${scriptUpdateConfig}
 
     echo "Finished!"
   '';
