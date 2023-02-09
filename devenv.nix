@@ -242,6 +242,18 @@ in {
         "http://localhost/dump.sql"
       ];
     };
+
+    documentRoot = lib.mkOption {
+      type = lib.types.str;
+      default = "public";
+      description = "Sets the docroot of caddy";
+    };
+
+    staticFilePaths = lib.mkOption {
+      type = lib.types.str;
+      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
+      description = "Sets the matcher paths to be \"ignored\" by caddy";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -287,17 +299,17 @@ in {
     services.caddy.virtualHosts."127.0.0.1:8000" = lib.mkDefault {
       extraConfig = lib.strings.concatStrings [''
         @default {
-          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          not path ${cfg.staticFilePaths}
           not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
         @debugger {
-          not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+          not path ${cfg.staticFilePaths}
           expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
         }
 
         tls internal
 
-        root * public
+        root * ${cfg.documentRoot}
 
         php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
         php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
