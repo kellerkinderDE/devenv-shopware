@@ -59,7 +59,7 @@ let
   entryScript = pkgs.writeScript "entryScript" ''
     PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
 
-    while ! ${pkgs.mysql}/bin/mysqladmin ping -u shopware -pshopware --silent; do
+    while ! ${config.services.mysql.package}/bin/mysqladmin ping -u shopware -pshopware --silent; do
       sleep 1
     done
 
@@ -126,8 +126,6 @@ let
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
-    PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
-
     if [[ "$1" == "" ]]; then
         echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
         exit
@@ -141,20 +139,26 @@ let
     TARGETFOLDER="${config.env.DEVENV_STATE}/importdb"
 
     rm -rf "$TARGETFOLDER"
-
     set -e
 
     if [[ "$1" == *.sql ]]; then
-        curl --create-dirs "$1" --output "$TARGETFOLDER/dump.sql"
+      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/dump.sql"
     elif [[ "$1" == *.gz ]]; then
-        curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
-        gunzip -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
+      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
+      ${pkgs.gzip}/bin/gunzip -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
     elif [[ "$1" == *.zip ]]; then
-        curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
-        unzip -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
+      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
+
+      if [ x"$IMPORT_DATABASE_PASSWORD" == "x" ]; then
+        UNZIP_COMMAND="${pkgs.unzip}/bin/unzip"
+      else
+        UNZIP_COMMAND="${pkgs.unzip}/bin/unzip -P $IMPORT_DATABASE_PASSWORD"
+      fi
+
+      $UNZIP_COMMAND -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
     else
-        echo "Unsupported file type for file at $1"
-        exit
+      echo "Unsupported file type for file at $1"
+      exit
     fi
 
     rm -f "$TARGETFOLDER/latest.sql.*"
@@ -162,14 +166,14 @@ let
     SQL_FILE=$(find "$TARGETFOLDER" -name "*.sql" | head -n 1)
 
     if [[ "$SQL_FILE" == "" ]]; then
-        echo "No SQL file found"
-        exit
+      echo "No SQL file found"
+      exit
     fi
 
-    LANG=C LC_CTYPE=C LC_ALL=C sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
-    LANG=C LC_CTYPE=C LC_ALL=C sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
+    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE" > $SQL_FILE
+    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE" > $SQL_FILE
 
-    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql shopware -f < "$SQL_FILE"
+    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql -u root shopware -f < "$SQL_FILE"
 
     ${scriptUpdateConfig}
 
@@ -426,8 +430,8 @@ in {
       read answer
 
       if [[ "$answer" != "y" ]]; then
-          echo "Alright, we will stop here."
-          exit
+        echo "Alright, we will stop here."
+        exit
       fi
 
       ${lib.concatMapStrings (dump: ''
