@@ -126,13 +126,15 @@ let
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
+    PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
+
     if [[ "$1" == "" ]]; then
-        echo "Please setup ENV DATABASE_DUMP_URL"
+        echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
         exit
     fi
 
     if ! ${config.services.mysql.package}/bin/mysqladmin ping > /dev/null 2>&1; then
-        echo "Mysql is dead or has gone away! devenv up?"
+        echo "MySQL server is dead or has gone away! devenv up?"
         exit
     fi
 
@@ -151,24 +153,23 @@ let
         curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
         unzip -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
     else
-        echo "unsupported file type for file at $1"
+        echo "Unsupported file type for file at $1"
         exit
     fi
 
-    rm -f "$TARGETFOLDER/latest.sql.zip"
+    rm -f "$TARGETFOLDER/latest.sql.*"
 
     SQL_FILE=$(find "$TARGETFOLDER" -name "*.sql" | head -n 1)
 
     if [[ "$SQL_FILE" == "" ]]; then
-        echo "no sql file found"
+        echo "No SQL file found"
         exit
     fi
 
-    #this seems MAC related?!
-    LC_ALL=C sed -i "" "s/DEFINER=[^*]*\*/\*/g" "$SQL_FILE"
-    LC_ALL=C sed -i "" 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
+    LANG=C LC_CTYPE=C LC_ALL=C sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
+    LANG=C LC_CTYPE=C LC_ALL=C sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
 
-    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql -u root shopware -f < "$SQL_FILE"
+    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql shopware -f < "$SQL_FILE"
 
     ${scriptUpdateConfig}
 
@@ -421,7 +422,7 @@ in {
     '';
 
     scripts.importdb.exec = ''
-      echo "Are you sure you want to download the file and overwritting database shopware with its data (y/n)?"
+      echo "Are you sure you want to download SQL files and overwrite the existing database with their data (y/n)?"
       read answer
 
       if [[ "$answer" != "y" ]]; then
