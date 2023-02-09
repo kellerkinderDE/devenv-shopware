@@ -78,8 +78,8 @@ kellerkinder.enableElasticsearch = true;
 Define the list of links to be imported with command importdb.
 Supported files:
 - *.sql
-- *.sql.gz
-- *.sql.zip
+- *.gz
+- *.zip
 
 *_Example_*
 ```
