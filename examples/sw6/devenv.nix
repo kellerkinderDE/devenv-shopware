@@ -5,9 +5,7 @@
   kellerkinder.additionalPhpConfig = ''
     memory_limit = 200M
   '';
-  kellerkinder.additionalPhpExtensions = [
-   "mailparse"
-  ];
+  kellerkinder.additionalPhpExtensions = [ "mailparse" ];
   kellerkinder.enableRabbitMq = false;
   kellerkinder.enableElasticsearch = false;
 }

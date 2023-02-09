@@ -3,56 +3,66 @@
 let
   cfg = config.kellerkinder;
 
-  phpConfig = lib.strings.concatStrings [''
-    memory_limit = 2G
-    pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
-    mysqli.default_socket = ''${MYSQL_UNIX_PORT}
-    blackfire.agent_socket = "${config.services.blackfire.socket}";
-    realpath_cache_ttl = 3600
-    session.gc_probability = 0
-    ${lib.strings.optionalString config.services.redis.enable ''
-    session.save_handler = redis
-    session.save_path = "tcp://127.0.0.1:6379/0"
-    redis.session.locking_enabled = 1
-    ''}
-    display_errors = On
-    display_startup_errors = true
-    error_reporting = E_ALL
-    html_errors = true
-    assert.active = 0
-    zend.detect_unicode = 0
-    opcache.memory_consumption = 256M
-    opcache.interned_strings_buffer = 20
-    opcache.enable_file_override = 1
-    opcache.enable_cli = 1
-    opcache.enabled = 1
-    zend.assertions = 0
-    short_open_tag = 0
-    xdebug.mode = "debug"
-    xdebug.start_with_request = "trigger"
-    xdebug.discover_client_host = 1
-    xdebug.var_display_max_depth = -1
-    xdebug.var_display_max_data = -1
-    xdebug.var_display_max_children = -1
-  '' cfg.additionalPhpConfig];
+  phpConfig = lib.strings.concatStrings [
+    ''
+      memory_limit = 2G
+      pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
+      mysqli.default_socket = ''${MYSQL_UNIX_PORT}
+      blackfire.agent_socket = "${config.services.blackfire.socket}";
+      realpath_cache_ttl = 3600
+      session.gc_probability = 0
+      ${lib.strings.optionalString config.services.redis.enable ''
+        session.save_handler = redis
+        session.save_path = "tcp://127.0.0.1:6379/0"
+        redis.session.locking_enabled = 1
+      ''}
+      display_errors = On
+      display_startup_errors = true
+      error_reporting = E_ALL
+      html_errors = true
+      assert.active = 0
+      zend.detect_unicode = 0
+      opcache.memory_consumption = 256M
+      opcache.interned_strings_buffer = 20
+      opcache.enable_file_override = 1
+      opcache.enable_cli = 1
+      opcache.enabled = 1
+      zend.assertions = 0
+      short_open_tag = 0
+      xdebug.mode = "debug"
+      xdebug.start_with_request = "trigger"
+      xdebug.discover_client_host = 1
+      xdebug.var_display_max_depth = -1
+      xdebug.var_display_max_data = -1
+      xdebug.var_display_max_children = -1
+    ''
+    cfg.additionalPhpConfig
+  ];
 
-  phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
+  phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then
+    config.env.PHP_VERSION
+  else
+    cfg.phpVersion;
   package = inputs.phps.packages.${builtins.currentSystem}.${phpVersion};
 
   phpPackage = package.buildEnv {
-    extensions = { all, enabled }: with all; enabled
-      ++ (lib.optional config.services.redis.enable redis)
+    extensions = { all, enabled }:
+      with all;
+      enabled ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
+      ++ lib.attrsets.attrValues
+      (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
     extraConfig = phpConfig;
   };
 
   phpXdebug = package.buildEnv {
-    extensions = { all, enabled }: with all; enabled ++ [ xdebug ]
-      ++ (lib.optional config.services.redis.enable redis)
+    extensions = { all, enabled }:
+      with all;
+      enabled ++ [ xdebug ] ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
+      ++ lib.attrsets.attrValues
+      (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
     extraConfig = phpConfig;
   };
 
@@ -70,7 +80,8 @@ let
     sleep infinity
   '';
 
-  systemConfigEntries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
+  systemConfigEntries =
+    lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
 
   scriptUpdateConfig = pkgs.writeScript "scriptUpdateConfig" ''
     # additional config
@@ -197,9 +208,7 @@ in {
       type = lib.types.attrsOf lib.types.str;
       description = "shopware system config settings";
       default = { };
-      example = {
-        "foo.bar.testString" = "false";
-      };
+      example = { "foo.bar.testString" = "false"; };
     };
 
     additionalPhpConfig = lib.mkOption {
@@ -215,9 +224,7 @@ in {
       type = lib.types.listOf lib.types.str;
       description = "Additional PHP extensions";
       default = [ ];
-      example = [
-        "mailparse"
-      ];
+      example = [ "mailparse" ];
     };
 
     additionalCaddyVhostConfig = lib.mkOption {
@@ -242,10 +249,7 @@ in {
       type = lib.types.listOf lib.types.str;
       description = "List of links to be imported with command importdb";
       default = [ ];
-      example = [
-        "http://localhost/dump.sql.gz"
-        "http://localhost/dump.sql"
-      ];
+      example = [ "http://localhost/dump.sql.gz" "http://localhost/dump.sql" ];
     };
 
     documentRoot = lib.mkOption {
@@ -256,16 +260,14 @@ in {
 
     staticFilePaths = lib.mkOption {
       type = lib.types.str;
-      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
-      description = "Sets the matcher paths to be \"ignored\" by caddy";
+      default =
+        "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
+      description = ''Sets the matcher paths to be "ignored" by caddy'';
     };
   };
 
   config = lib.mkIf cfg.enable {
-    packages = [
-      pkgs.jq
-      pkgs.gnupatch
-    ];
+    packages = [ pkgs.jq pkgs.gnupatch ];
 
     languages.javascript.enable = true;
     languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
@@ -298,48 +300,50 @@ in {
     languages.php.fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
 
     services.caddy.enable = true;
-    services.caddy.config = "{
-      auto_https disable_redirects
-    }";
+    services.caddy.config = ''
+      {
+            auto_https disable_redirects
+          }'';
     services.caddy.virtualHosts."127.0.0.1:8000" = lib.mkDefault {
-      extraConfig = lib.strings.concatStrings [''
-        @default {
-          not path ${cfg.staticFilePaths}
-          not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-        }
-        @debugger {
-          not path ${cfg.staticFilePaths}
-          expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-        }
+      extraConfig = lib.strings.concatStrings [
+        ''
+          @default {
+            not path ${cfg.staticFilePaths}
+            not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+          }
+          @debugger {
+            not path ${cfg.staticFilePaths}
+            expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+          }
 
-        tls internal
+          tls internal
 
-        root * ${cfg.documentRoot}
+          root * ${cfg.documentRoot}
 
-        php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
-        php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
+          php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
+          php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
 
-        encode zstd gzip
+          encode zstd gzip
 
-        file_server
+          file_server
 
-        log {
-          output stderr
-          format console
-          level ERROR
-        }
-      '' cfg.additionalCaddyVhostConfig];
+          log {
+            output stderr
+            format console
+            level ERROR
+          }
+        ''
+        cfg.additionalCaddyVhostConfig
+      ];
     };
 
     services.mysql.enable = true;
     services.mysql.initialDatabases = lib.mkDefault [{ name = "shopware"; }];
-    services.mysql.ensureUsers = lib.mkDefault [
-      {
-        name = "shopware";
-        password = "shopware";
-        ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
-      }
-    ];
+    services.mysql.ensureUsers = lib.mkDefault [{
+      name = "shopware";
+      password = "shopware";
+      ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
+    }];
     services.mysql.settings = {
       mysqld = {
         group_concat_max_len = 2048;
@@ -381,9 +385,12 @@ in {
     # Environment variables
     env = lib.mkMerge [
       (lib.mkIf cfg.enable {
-        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
-        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        DATABASE_URL =
+          lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
+        MAILER_URL =
+          lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        MAILER_DSN =
+          lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
         APP_URL = lib.mkDefault "https://127.0.0.1:8000";
         CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
@@ -435,8 +442,8 @@ in {
       fi
 
       ${lib.concatMapStrings (dump: ''
-         echo "Importing ${dump}"
-         ${importDbHelper} ${dump}
+        echo "Importing ${dump}"
+        ${importDbHelper} ${dump}
       '') cfg.importDatabaseDumps}
     '';
   };
