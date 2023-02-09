@@ -51,8 +51,7 @@ let
       enabled ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues
-      (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
     extraConfig = phpConfig;
   };
 
@@ -61,8 +60,7 @@ let
       with all;
       enabled ++ [ xdebug ] ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues
-      (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
     extraConfig = phpConfig;
   };
 
@@ -208,7 +206,9 @@ in {
       type = lib.types.attrsOf lib.types.str;
       description = "shopware system config settings";
       default = { };
-      example = { "foo.bar.testString" = "false"; };
+      example = {
+        "foo.bar.testString" = "false";
+      };
     };
 
     additionalPhpConfig = lib.mkOption {
@@ -249,7 +249,10 @@ in {
       type = lib.types.listOf lib.types.str;
       description = "List of links to be imported with command importdb";
       default = [ ];
-      example = [ "http://localhost/dump.sql.gz" "http://localhost/dump.sql" ];
+      example = [
+        "http://localhost/dump.sql.gz"
+        "http://localhost/dump.sql"
+      ];
     };
 
     documentRoot = lib.mkOption {
@@ -260,8 +263,7 @@ in {
 
     staticFilePaths = lib.mkOption {
       type = lib.types.str;
-      default =
-        "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
+      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
       description = ''Sets the matcher paths to be "ignored" by caddy'';
     };
   };
@@ -302,8 +304,9 @@ in {
     services.caddy.enable = true;
     services.caddy.config = ''
       {
-            auto_https disable_redirects
-          }'';
+        auto_https disable_redirects
+      }
+    '';
     services.caddy.virtualHosts."127.0.0.1:8000" = lib.mkDefault {
       extraConfig = lib.strings.concatStrings [
         ''
@@ -385,12 +388,9 @@ in {
     # Environment variables
     env = lib.mkMerge [
       (lib.mkIf cfg.enable {
-        DATABASE_URL =
-          lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
-        MAILER_URL =
-          lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-        MAILER_DSN =
-          lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
+        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
         APP_URL = lib.mkDefault "https://127.0.0.1:8000";
         CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
