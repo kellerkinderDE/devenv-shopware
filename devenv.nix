@@ -269,7 +269,10 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    packages = [ pkgs.jq pkgs.gnupatch ];
+    packages = [
+      pkgs.jq
+      pkgs.gnupatch
+    ];
 
     languages.javascript.enable = true;
     languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
