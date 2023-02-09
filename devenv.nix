@@ -144,10 +144,10 @@ let
 
     if [[ "$1" == *.sql ]]; then
         curl --create-dirs "$1" --output "$TARGETFOLDER/dump.sql"
-    elif [[ "$1" == *.sql.gz ]]; then
+    elif [[ "$1" == *.gz ]]; then
         curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
         gunzip -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
-    elif [[ "$1" == *.sql.zip ]]; then
+    elif [[ "$1" == *.zip ]]; then
         curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
         unzip -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
     else
