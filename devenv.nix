@@ -418,7 +418,7 @@ in {
     '';
 
     scripts.debug.exec = ''
-      XDEBUG_SESSION=1 ${phpPackage}/bin/php "$@"
+      XDEBUG_SESSION=1 ${phpXdebug}/bin/php "$@"
     '';
 
     scripts.importdb.exec = ''
