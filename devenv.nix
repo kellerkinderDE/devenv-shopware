@@ -12,9 +12,9 @@ let
       realpath_cache_ttl = 3600
       session.gc_probability = 0
       ${lib.strings.optionalString config.services.redis.enable ''
-        session.save_handler = redis
-        session.save_path = "tcp://127.0.0.1:6379/0"
-        redis.session.locking_enabled = 1
+      session.save_handler = redis
+      session.save_path = "tcp://127.0.0.1:6379/0"
+      redis.session.locking_enabled = 1
       ''}
       display_errors = On
       display_startup_errors = true
@@ -39,16 +39,12 @@ let
     cfg.additionalPhpConfig
   ];
 
-  phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then
-    config.env.PHP_VERSION
-  else
-    cfg.phpVersion;
+  phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
   package = inputs.phps.packages.${builtins.currentSystem}.${phpVersion};
 
   phpPackage = package.buildEnv {
-    extensions = { all, enabled }:
-      with all;
-      enabled ++ (lib.optional config.services.redis.enable redis)
+    extensions = { all, enabled }: with all; enabled
+      ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
       ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
@@ -56,9 +52,9 @@ let
   };
 
   phpXdebug = package.buildEnv {
-    extensions = { all, enabled }:
-      with all;
-      enabled ++ [ xdebug ] ++ (lib.optional config.services.redis.enable redis)
+    extensions = { all, enabled }: with all; enabled
+      ++ [ xdebug ]
+      ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
       ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
     extraConfig = phpConfig;
@@ -78,8 +74,7 @@ let
     sleep infinity
   '';
 
-  systemConfigEntries =
-    lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
+  systemConfigEntries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
 
   scriptUpdateConfig = pkgs.writeScript "scriptUpdateConfig" ''
     # additional config
@@ -272,6 +267,7 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
+      pkgs.gnused
     ];
 
     languages.javascript.enable = true;
