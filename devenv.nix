@@ -299,8 +299,8 @@ in {
       src = pkgs.fetchFromGitHub {
         owner = "caddyserver";
         repo = "caddy";
-        rev = "90798f3eea6b7a219a9bb55f680919c0504263e3";
-        hash = "sha256-YH+lo6gKqmhu1/3HZdWXnxTXaUwC8To+OCmGpji6i3k=";
+        rev = "6bad878a22e048762262d6fabe2144cefaf4ca81";
+        hash = "sha256-Tbf6RB3106OEZGc/Wx7vk+I82Z8/Q3WqnID4f8uZ6z0=";
       };
     });
     services.caddy.config = "{
