@@ -294,6 +294,15 @@ in {
     languages.php.fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
 
     services.caddy.enable = true;
+    services.caddy.package = pkgs.caddy.overrideAttrs (previousAttrs: {
+      name = "caddy-next";
+      src = pkgs.fetchFromGitHub {
+        owner = "caddyserver";
+        repo = "caddy";
+        rev = "90798f3eea6b7a219a9bb55f680919c0504263e3";
+        hash = "sha256-YH+lo6gKqmhu1/3HZdWXnxTXaUwC8To+OCmGpji6i3k=";
+      };
+    });
     services.caddy.config = "{
       auto_https disable_redirects
     }";
