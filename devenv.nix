@@ -261,6 +261,7 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
+      pkgs.caddy
     ];
 
     languages.javascript.enable = true;
