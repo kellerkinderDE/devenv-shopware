@@ -75,7 +75,9 @@ kellerkinder.enableElasticsearch = true;
 
 ### kellerkinder.importDatabaseDumps
 
-Define the list of links to be imported with command importdb.
+You can import a list of links of database dumps by using the command `importdb`.
+Define a list of links like in the example below.
+
 Supported files:
 - *.sql
 - *.gz
