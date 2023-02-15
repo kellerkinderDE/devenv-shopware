@@ -63,7 +63,7 @@ let
   entryScript = pkgs.writeScript "entryScript" ''
     PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
 
-    while ! ${config.services.mysql.package}/bin/mysqladmin ping -u shopware -pshopware --silent; do
+    while ! $DEVENV_PROFILE/bin/mysqladmin ping --silent; do
       sleep 1
     done
 
@@ -135,7 +135,7 @@ let
         exit
     fi
 
-    if ! ${config.services.mysql.package}/bin/mysqladmin ping > /dev/null 2>&1; then
+    if ! $DEVENV_PROFILE/bin/mysqladmin ping > /dev/null 2>&1; then
         echo "MySQL server is dead or has gone away! devenv up?"
         exit
     fi
@@ -146,20 +146,13 @@ let
     set -e
 
     if [[ "$1" == *.sql ]]; then
-      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/dump.sql"
+      ${pkgs.curl}/bin/curl -s --create-dirs "$1" --output "$TARGETFOLDER/latest.sql"
     elif [[ "$1" == *.gz ]]; then
-      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
-      ${pkgs.gzip}/bin/gunzip -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
+      ${pkgs.curl}/bin/curl -s --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.gz"
+      ${pkgs.gzip}/bin/gunzip -q -c "$TARGETFOLDER/latest.sql.gz" > "$TARGETFOLDER/dump.sql"
     elif [[ "$1" == *.zip ]]; then
-      ${pkgs.curl}/bin/curl --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
-
-      if [ x"$IMPORT_DATABASE_PASSWORD" == "x" ]; then
-        UNZIP_COMMAND="${pkgs.unzip}/bin/unzip"
-      else
-        UNZIP_COMMAND="${pkgs.unzip}/bin/unzip -P $IMPORT_DATABASE_PASSWORD"
-      fi
-
-      $UNZIP_COMMAND -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
+      ${pkgs.curl}/bin/curl -s --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
+      ${pkgs.unzip}/bin/unzip -qq -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
     else
       echo "Unsupported file type for file at $1"
       exit
@@ -174,14 +167,12 @@ let
       exit
     fi
 
-    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE" > $SQL_FILE
-    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed 's/NO_AUTO_CREATE_USER//' "$SQL_FILE" > $SQL_FILE
+    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed -i -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
+    LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed -i 's/NO_AUTO_CREATE_USER//' "$SQL_FILE"
 
-    MYSQL_PWD="" ${config.services.mysql.package}/bin/mysql -u root shopware -f < "$SQL_FILE"
+    $DEVENV_PROFILE/bin/mysql shopware -f < "$SQL_FILE"
 
-    ${scriptUpdateConfig}
-
-    echo "Finished!"
+    echo "Import $1 finished!"
   '';
 in {
   options.kellerkinder = {
@@ -228,6 +219,13 @@ in {
       description = "Additional caddy vhost configuration";
     };
 
+    additionalCaddyServerAlias = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "Additional caddy server alias";
+      default = [ ];
+      example = [ "example.com" ];
+    };
+
     enableElasticsearch = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -267,108 +265,116 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
-      pkgs.gnused
     ];
 
-    languages.javascript.enable = true;
-    languages.javascript.package = lib.mkDefault pkgs.nodejs-16_x;
+    languages.javascript = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.nodejs-16_x;
+    };
 
-    languages.php.enable = true;
-    languages.php.package = lib.mkDefault phpPackage;
+    languages.php = {
+      enable = lib.mkDefault true;
+      package = lib.mkDefault phpPackage;
 
-    languages.php.fpm.pools.web = {
+      fpm.pools.web = {
+        settings = {
+          "clear_env" = "no";
+          "pm" = "dynamic";
+          "pm.max_children" = 10;
+          "pm.start_servers" = 2;
+          "pm.min_spare_servers" = 1;
+          "pm.max_spare_servers" = 10;
+        };
+      };
+      fpm.pools.web.phpPackage = lib.mkDefault phpPackage;
+
+      fpm.pools.xdebug = {
+        settings = {
+          "clear_env" = "no";
+          "pm" = "dynamic";
+          "pm.max_children" = 10;
+          "pm.start_servers" = 2;
+          "pm.min_spare_servers" = 1;
+          "pm.max_spare_servers" = 10;
+        };
+      };
+      fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
+    };
+
+    services.caddy = {
+      enable = lib.mkDefault true;
+      config = ''
+        {
+          auto_https disable_redirects
+        }
+      '';
+      virtualHosts."127.0.0.1:8000" = lib.mkDefault {
+        serverAliases = cfg.additionalCaddyServerAlias;
+        extraConfig = lib.strings.concatStrings [
+          ''
+            @default {
+              not path ${cfg.staticFilePaths}
+              not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+            }
+            @debugger {
+              not path ${cfg.staticFilePaths}
+              expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+            }
+
+            tls internal
+
+            root * ${cfg.documentRoot}
+
+            php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
+            php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
+
+            encode zstd gzip
+
+            file_server
+
+            log {
+              output stderr
+              format console
+              level ERROR
+            }
+          ''
+          cfg.additionalCaddyVhostConfig
+        ];
+      };
+    };
+
+    services.mysql = {
+      enable = lib.mkDefault true;
+      initialDatabases = lib.mkDefault [{ name = "shopware"; }];
+      ensureUsers = lib.mkDefault [{
+        name = "shopware";
+        password = "shopware";
+        ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
+      }];
       settings = {
-        "clear_env" = "no";
-        "pm" = "dynamic";
-        "pm.max_children" = 10;
-        "pm.start_servers" = 2;
-        "pm.min_spare_servers" = 1;
-        "pm.max_spare_servers" = 10;
-      };
-    };
-    languages.php.fpm.pools.web.phpPackage = lib.mkDefault phpPackage;
-
-    languages.php.fpm.pools.xdebug = {
-      settings = {
-        "clear_env" = "no";
-        "pm" = "dynamic";
-        "pm.max_children" = 10;
-        "pm.start_servers" = 2;
-        "pm.min_spare_servers" = 1;
-        "pm.max_spare_servers" = 10;
-      };
-    };
-    languages.php.fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
-
-    services.caddy.enable = true;
-    services.caddy.config = ''
-      {
-        auto_https disable_redirects
-      }
-    '';
-    services.caddy.virtualHosts."127.0.0.1:8000" = lib.mkDefault {
-      extraConfig = lib.strings.concatStrings [
-        ''
-          @default {
-            not path ${cfg.staticFilePaths}
-            not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-          }
-          @debugger {
-            not path ${cfg.staticFilePaths}
-            expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-          }
-
-          tls internal
-
-          root * ${cfg.documentRoot}
-
-          php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
-          php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
-
-          encode zstd gzip
-
-          file_server
-
-          log {
-            output stderr
-            format console
-            level ERROR
-          }
-        ''
-        cfg.additionalCaddyVhostConfig
-      ];
-    };
-
-    services.mysql.enable = true;
-    services.mysql.initialDatabases = lib.mkDefault [{ name = "shopware"; }];
-    services.mysql.ensureUsers = lib.mkDefault [{
-      name = "shopware";
-      password = "shopware";
-      ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
-    }];
-    services.mysql.settings = {
-      mysqld = {
-        group_concat_max_len = 2048;
-        key_buffer_size = 16777216;
-        max_allowed_packet = 134217728;
-        sync_binlog = 0;
-        table_open_cache = 1024;
-        log_bin_trust_function_creators = 1;
-      };
-      mysql = {
-        user = "shopware";
-        password = "shopware";
-        host = "127.0.0.1";
-      };
-      mysqldump = {
-        user = "shopware";
-        password = "shopware";
-        host = "127.0.0.1";
-      };
-      mysqladmin = {
-        user = "shopware";
-        password = "shopware";
-        host = "127.0.0.1";
+        mysqld = {
+          group_concat_max_len = 2048;
+          key_buffer_size = 16777216;
+          max_allowed_packet = 134217728;
+          sync_binlog = 0;
+          table_open_cache = 1024;
+          log_bin_trust_function_creators = 1;
+        };
+        mysql = {
+          user = "shopware";
+          password = "shopware";
+          host = "127.0.0.1";
+        };
+        mysqldump = {
+          user = "shopware";
+          password = "shopware";
+          host = "127.0.0.1";
+        };
+        mysqladmin = {
+          user = "shopware";
+          password = "shopware";
+          host = "127.0.0.1";
+        };
       };
     };
 
@@ -424,7 +430,7 @@ in {
     '';
 
     scripts.uuid.exec = ''
-      uuidgen | tr "[:upper:]" "[:lower:]" | sed 's/-//g'
+      ${pkgs.toybox}/bin/uuidgen | tr "[:upper:]" "[:lower:]" | sed 's/-//g'
     '';
 
     scripts.debug.exec = ''
@@ -444,6 +450,8 @@ in {
         echo "Importing ${dump}"
         ${importDbHelper} ${dump}
       '') cfg.importDatabaseDumps}
+
+      ${scriptUpdateConfig}
     '';
   };
 }

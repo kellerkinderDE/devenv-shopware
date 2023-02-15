@@ -56,6 +56,26 @@ kellerkinder.additionalPhpExtensions = [
 ];
 ```
 
+### kellerkinder.additionalCaddyServerAlias
+Define additional server aliases that are added to caddy.
+
+*_Example_*
+```
+kellerkinder.additionalCaddyServerAlias = [
+   "example.com"
+];
+```
+
+### kellerkinder.additionalCaddyVhostConfig
+Define additional vhost configurations that are appended to the general vhost configuration.
+
+*_Example_*
+```
+kellerkinder.additionalCaddyVhostConfig = ''
+  tls internal
+'';
+```
+
 ### kellerkinder.enableRabbitMq
 Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
