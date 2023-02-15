@@ -3,7 +3,7 @@
 {
   kellerkinder.phpVersion = "php80";
   kellerkinder.additionalPhpConfig = ''
-    memory_limit = 200M
+    memory_limit = 512M
   '';
   kellerkinder.additionalPhpExtensions = [ "mailparse" ];
   kellerkinder.enableRabbitMq = false;
