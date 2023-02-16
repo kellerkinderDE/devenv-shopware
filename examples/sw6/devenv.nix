@@ -1,7 +1,7 @@
 { pkgs, config, inputs, lib, ... }:
 
 {
-  kellerkinder.phpVersion = "php80";
+  kellerkinder.phpVersion = "php81";
   kellerkinder.additionalPhpConfig = ''
     memory_limit = 512M
   '';

@@ -213,15 +213,15 @@ in {
       example = [ "mailparse" ];
     };
 
-    additionalCaddyVhostConfig = lib.mkOption {
+    additionalVhostConfig = lib.mkOption {
       type = lib.types.str;
       default = "";
-      description = "Additional caddy vhost configuration";
+      description = "Additional vhost configuration";
     };
 
-    additionalCaddyServerAlias = lib.mkOption {
+    additionalServerAlias = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "Additional caddy server alias";
+      description = "Additional server alias";
       default = [ ];
       example = [ "example.com" ];
     };
@@ -309,7 +309,7 @@ in {
         }
       '';
       virtualHosts."127.0.0.1:8000" = lib.mkDefault {
-        serverAliases = cfg.additionalCaddyServerAlias;
+        serverAliases = cfg.additionalServerAlias;
         extraConfig = lib.strings.concatStrings [
           ''
             @default {
@@ -338,7 +338,7 @@ in {
               level ERROR
             }
           ''
-          cfg.additionalCaddyVhostConfig
+          cfg.additionalVhostConfig
         ];
       };
     };

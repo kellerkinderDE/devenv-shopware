@@ -56,22 +56,22 @@ kellerkinder.additionalPhpExtensions = [
 ];
 ```
 
-### kellerkinder.additionalCaddyServerAlias
+### kellerkinder.additionalServerAlias
 Define additional server aliases that are added to caddy.
 
 *_Example_*
 ```
-kellerkinder.additionalCaddyServerAlias = [
+kellerkinder.additionalServerAlias = [
    "example.com"
 ];
 ```
 
-### kellerkinder.additionalCaddyVhostConfig
+### kellerkinder.additionalVhostConfig
 Define additional vhost configurations that are appended to the general vhost configuration.
 
 *_Example_*
 ```
-kellerkinder.additionalCaddyVhostConfig = ''
+kellerkinder.additionalVhostConfig = ''
   tls internal
 '';
 ```
