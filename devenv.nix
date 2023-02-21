@@ -10,11 +10,6 @@ let
     blackfire.agent_socket = "${config.services.blackfire.socket}";
     realpath_cache_ttl = 3600
     session.gc_probability = 0
-    ${lib.strings.optionalString config.services.redis.enable ''
-    session.save_handler = redis
-    session.save_path = "tcp://127.0.0.1:6379/0"
-    redis.session.locking_enabled = 1
-    ''}
     display_errors = On
     display_startup_errors = true
     error_reporting = E_ALL
