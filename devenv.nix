@@ -85,12 +85,12 @@ let
 
     # additional config
     ${lib.concatMapStrings ({ name, value }: ''
-      $CONSOLE system:config:set ${name} ${value}
+      $CONSOLE system:config:set ${name} ${value} || exit 1
       echo "System config ${name} set to ${value}"
     '') systemConfigEntries}
 
     # default config
-    $CONSOLE system:config:set core.mailerSettings.emailAgent ""
+    $CONSOLE system:config:set core.mailerSettings.emailAgent "" || exit 1
     echo "System config core.mailerSettings.emailAgent set to \"\""
   '';
 
