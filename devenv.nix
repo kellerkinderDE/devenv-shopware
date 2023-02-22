@@ -183,8 +183,8 @@ in {
       default = { };
       description = "Additional mysqld settings";
       example = {
-         "lower_case_table_names" = "1";
-         "sql_mode" = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
+         lower_case_table_names = "1";
+         sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
       };
     };
 
