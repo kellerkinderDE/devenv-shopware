@@ -56,83 +56,53 @@ let
   };
 
   entryScript = pkgs.writeScript "entryScript" ''
-    PATH="${lib.makeBinPath [ pkgs.coreutils ]}:$PATH"
+    set -euo pipefail
 
     while ! $DEVENV_PROFILE/bin/mysqladmin ping --silent; do
-      sleep 1
+      ${pkgs.coreutils}/bin/sleep 1
     done
 
     ${scriptUpdateConfig}
 
     echo -e "Startup completed"
 
-    sleep infinity
+    ${pkgs.coreutils}/bin/sleep infinity
   '';
 
   systemConfigEntries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
 
   scriptUpdateConfig = pkgs.writeScript "scriptUpdateConfig" ''
+    VENDOR=${config.env.DEVENV_ROOT}/vendor/autoload.php
+    CONSOLE=${config.env.DEVENV_ROOT}/bin/console
+
+    echo "Updating system config"
+
+    if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ];
+    then
+      echo "Vendor folder or console command not found. Please run composer install."
+      exit 1
+    fi
+
     # additional config
     ${lib.concatMapStrings ({ name, value }: ''
-      ${updateConfig} ${name} "${lib.escapeShellArg value}"
+      $CONSOLE system:config:set ${name} ${value}
+      echo "System config ${name} set to ${value}"
     '') systemConfigEntries}
 
     # default config
-    ${updateConfig} core.mailerSettings.emailAgent ""
-  '';
-
-  updateConfig = pkgs.writeScript "updateConfig" ''
-    #!/usr/bin/env php
-    <?php declare(strict_types=1);
-
-    $parts = parse_url(getenv('DATABASE_URL'));
-
-    if (empty($parts) || empty(trim(implode("", $parts)))) {
-      die("missing configuration");
-    }
-
-    $dsn = sprintf("mysql:host=%s:%s;dbname=%s", $parts['host'], $parts['port'], str_replace("/", "", $parts['path']));
-
-    try {
-      $pdo = new PDO($dsn, $parts['user'], $parts['pass']);
-      $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-      $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-    } catch (\Throwable $exception) {
-      die("database connection failed");
-    }
-
-    $table = $pdo->query(sprintf("SHOW TABLES LIKE '%s';", 'system_config'))->fetchColumn();
-
-    if ($table === false) {
-        die("system_config table is missing, please restart devenv");
-    }
-
-    if (empty($argv[1])) {
-        die("no configuration key provided");
-    }
-
-    $key = (string) $argv[1];
-    $value = sprintf('{"_value": "%s"}', $argv[2] ?? "");
-
-    $pdo->prepare("UPDATE system_config SET `configuration_value` = :value  WHERE configuration_key = :key")->execute([
-        'value' => $value,
-        'key' => $key,
-    ]);
-
-    echo sprintf("Configuration %s set to %s\n", $key, empty($argv[2]) ? "empty" : $argv[2]);
-
-    exit(0);
+    $CONSOLE system:config:set core.mailerSettings.emailAgent ""
+    echo "System config core.mailerSettings.emailAgent set to \"\""
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
     if [[ "$1" == "" ]]; then
-        echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
-        exit
+      echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
+      exit
     fi
 
     if ! $DEVENV_PROFILE/bin/mysqladmin ping > /dev/null 2>&1; then
-        echo "MySQL server is dead or has gone away! devenv up?"
-        exit
+      echo "MySQL server is dead or has gone away! devenv up?"
+      exit
     fi
 
     TARGETFOLDER="${config.env.DEVENV_STATE}/importdb"
@@ -320,8 +290,13 @@ in {
 
             root * ${cfg.documentRoot}
 
-            php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket}
-            php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket}
+            php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
+              trusted_proxies private_ranges
+            }
+
+            php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
+              trusted_proxies private_ranges
+            }
 
             encode zstd gzip
 
@@ -420,7 +395,7 @@ in {
       CONSOLE=${config.env.DEVENV_ROOT}/bin/console
 
       if test -f "$CONSOLE"; then
-          exec $CONSOLE cache:clear
+        exec $CONSOLE cache:clear
       fi
     '';
 
