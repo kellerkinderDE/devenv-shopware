@@ -36,6 +36,16 @@ Allows to define the used PHP Version. For supported versions see [Different PHP
 kellerkinder.phpVersion = "php80";
 ```
 
+### kellerkinder.systemConfig
+Define shopware systemconfig values.
+
+*_Example_*
+```
+kellerkinder.systemConfig = {
+    "foo.bar.testString" = "false";
+};
+```
+
 ### kellerkinder.additionalPhpConfig
 Define additional php.ini settings which are used for php-fpm and php-cli.
 
