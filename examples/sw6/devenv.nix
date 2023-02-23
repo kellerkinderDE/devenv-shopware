@@ -6,6 +6,6 @@
     memory_limit = 512M
   '';
   kellerkinder.additionalPhpExtensions = [ "mailparse" ];
-  kellerkinder.enableRabbitMq = false;
-  kellerkinder.enableElasticsearch = false;
+  kellerkinder.enableRabbitMq = true;
+  kellerkinder.enableElasticsearch = true;
 }
