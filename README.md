@@ -147,6 +147,16 @@ Fallback redirect URL for media not found on local storage. Best for CDN purpose
 kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
+### kellerkinder.fallbackMediaUrl
+This url is called when the local media does not exist. Best for CDN purposes without downloading them.
+
+**NOTE**: The url must not end with a slash.
+
+*_Example_*
+```
+kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+```
+
 ## Different PHP versions
 
 If you want to use a specific PHP version, you can set the following versions
