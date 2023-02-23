@@ -225,10 +225,10 @@ in {
       description = ''Sets the matcher paths to be "ignored" by caddy'';
     };
 
-    fallbackMediaUrl = lib.mkOption {
+    fallbackRedirectMediaUrl = lib.mkOption {
       type = lib.types.str;
       default = "";
-      description = ''This url is called when the local media does not exist. Best for CDN purposes without downloading them.'';
+      description = ''Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.'';
     };
   };
 
@@ -299,9 +299,9 @@ in {
             encode zstd gzip
 
             handle /media/* {
-                ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
+                ${lib.strings.optionalString (cfg.fallbackRedirectMediaUrl != "") ''
                 @notStatic not file
-                redir @notStatic ${cfg.fallbackMediaUrl}{path}
+                redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackRedirectMediaUrl}{path}
                 ''}
                 file_server
             }

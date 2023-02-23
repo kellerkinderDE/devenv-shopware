@@ -139,14 +139,12 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-### kellerkinder.fallbackMediaUrl
-This url is called when the local media does not exist. Best for CDN purposes without downloading them.
-
-**NOTE**: The url must not end with a slash.
+### kellerkinder.fallbackRedirectMediaUrl
+Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*
 ```
-kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
 ## Different PHP versions
