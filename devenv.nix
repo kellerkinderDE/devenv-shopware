@@ -91,7 +91,7 @@ let
 
     # default config
     $CONSOLE system:config:set core.mailerSettings.emailAgent "" || exit 1
-    echo "System config core.mailerSettings.emailAgent set to \"\""
+    echo "System config core.mailerSettings.emailAgent set to ''''"
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
