@@ -224,6 +224,12 @@ in {
       default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
       description = ''Sets the matcher paths to be "ignored" by caddy'';
     };
+
+    fallbackMediaUrl = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = ''This url is called when the local media does not exist. Best for CDN purposes without downloading them.'';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -290,17 +296,31 @@ in {
 
             root * ${cfg.documentRoot}
 
-            php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
-              trusted_proxies private_ranges
-            }
-
-            php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
-              trusted_proxies private_ranges
-            }
-
             encode zstd gzip
 
-            file_server
+            handle /media/* {
+                ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
+                @notStatic not file
+                redir @notStatic ${cfg.fallbackMediaUrl}{path}
+                ''}
+                file_server
+            }
+
+            handle_errors {
+                respond "{err.status_code} {err.status_text}"
+            }
+
+            handle {
+                php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
+                              trusted_proxies private_ranges
+                }
+
+                php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
+                  trusted_proxies private_ranges
+                }
+
+                file_server
+            }
 
             log {
               output stderr
