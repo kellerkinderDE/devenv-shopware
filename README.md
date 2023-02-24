@@ -22,14 +22,14 @@ Make sure to run the following command to accelerate the startup process:
 ```bash
 cachix use devenv ; cachix use fossar ; cachix use shopware
 ```
-Add the following files to the project .gitignore file:
-- .devenv*
-- devenv.local.nix
+Add the following files to the project `.gitignore` file:
+- `.devenv*`
+- `devenv.local.nix`
 
 ## Options
 
 ### kellerkinder.phpVersion
-Allows to define the used PHP Version. For supported versions see [Different PHP versions](#different-php-versions)
+Allows to define the used PHP Version. For supported versions, see [Different PHP versions](#different-php-versions)
 
 *_Example_*
 ```
@@ -47,7 +47,7 @@ kellerkinder.systemConfig = {
 ```
 
 ### kellerkinder.additionalPhpConfig
-Define additional php.ini settings which are used for php-fpm and php-cli.
+Define additional php.ini settings, which are used for php-fpm and php-cli.
 
 *_Example_*
 ```
@@ -164,10 +164,10 @@ and needs to be adjusted when using a lower version.
 - php82
 
 ## PHP debugging
-As mentioned in the features section, Xdebug is shipped with devenv and you need to activate it to actually debug something. For the Frontend you can use the [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively you can simply add a query parameter to the URL you want to debug. Like this: `https://127.0.0.1:8000/?XDEBUG_SESSION=1`
-This also works great when having to debug API requests, e.g in Insomnia.
+As mentioned in the features section, Xdebug is shipped with devenv, and you need to activate it to actually debug something. For the Frontend, you can use the [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively, you can simply add a query parameter to the URL you want to debug. Like this: `https://127.0.0.1:8000/?XDEBUG_SESSION=1`
+This also works great when having to debug API requests, e.g. in Insomnia.
 
-For the CLI you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
+For the CLI, you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
 
 ## License
 MIT
