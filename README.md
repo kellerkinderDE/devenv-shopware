@@ -163,5 +163,11 @@ and needs to be adjusted when using a lower version.
 - php81
 - php82
 
+## PHP debugging
+As mentioned in the features section XDebug is shipped with devenv, but you need to activate it to actully debug something. For the Frontend you can use the [XDebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively you can simply add a query parameter to the URL you want to debug like this: `https://127.0.0.1:8000/?XDEBUG_SESSION=1`
+This also works great to debug API request in Insomnia or something similar.
+
+For the CLI you can use an integrated debug helper by simply adding `debug` before your CLI commands, e.g. `debug bin/console`.
+
 ## License
 MIT
