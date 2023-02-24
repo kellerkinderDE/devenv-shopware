@@ -7,7 +7,7 @@ tightly tailored to the needs of our team members working on various projects wi
 ## Notable Features:
 - Overrides Shopware's default mailer configuration to use [MailHog](https://github.com/mailhog/MailHog)
 - Provides helper functions to clear caches
-- Enables XDebug without a performance impact when not using it
+- Enables Xdebug without a performance impact when not using it
 - Easily configurable PHP Version
 - Inherits all default devenv features and services
 
@@ -162,6 +162,12 @@ and needs to be adjusted when using a lower version.
 - php80
 - php81
 - php82
+
+## PHP debugging
+As mentioned in the features section, Xdebug is shipped with devenv and you need to activate it to actually debug something. For the Frontend you can use the [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively you can simply add a query parameter to the URL you want to debug. Like this: `https://127.0.0.1:8000/?XDEBUG_SESSION=1`
+This also works great when having to debug API requests, e.g in Insomnia.
+
+For the CLI you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
 
 ## License
 MIT
