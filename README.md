@@ -128,6 +128,7 @@ Changes the default document root (`public`) of caddy to the specified value
 ```
 kellerkinder.documentRoot = ".";
 ```
+
 ### kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
@@ -136,6 +137,14 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 *_Example_*
 ```
 kellerkinder.staticFilePaths = "myCustomFolder/*";
+```
+
+### kellerkinder.fallbackRedirectMediaUrl
+Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
+
+*_Example_*
+```
+kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
 ## Different PHP versions
