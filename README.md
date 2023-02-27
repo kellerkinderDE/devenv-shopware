@@ -92,7 +92,7 @@ Define additional settings for mysqld server.
 *_Example_*
 ```
 kellerkinder.additionalMysqldSettings = {
-   lower_case_table_names = "1";
+   sync_binlog = "0";
    sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
 };
 ```
