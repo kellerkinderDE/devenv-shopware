@@ -13,7 +13,6 @@ Add the following files to the project `.gitignore` file:
 A full list of options can be found [here](docs/options.md).
 
 # Different PHP versions
-
 If you want to use a specific PHP version, you can set the following versions
 in your project `devenv.nix` file. The php.ini configuration is >php80 specific
 and needs to be adjusted when using a lower version.

@@ -11,12 +11,12 @@ tightly tailored to the needs of our team members working on various projects wi
 - Easily configurable PHP Version
 - Inherits all default devenv features and services
 
+## Setup & Usage
+A description about the setup and usage can be found in the [Wiki](docs/home#setup).
+
 ## More Information:
 - https://devenv.sh/
 - https://developer.shopware.com/docs/guides/installation/devenv
-
-## Setup & Usage
-A description about the setup and usage can be found in the [Wiki](docs/home#setup).
 
 ## License
 MIT
