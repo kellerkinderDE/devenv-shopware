@@ -15,5 +15,8 @@ tightly tailored to the needs of our team members working on various projects wi
 - https://devenv.sh/
 - https://developer.shopware.com/docs/guides/installation/devenv
 
+## Setup & Usage
+A description about the setup and usage can be found in the [Wiki](docs/home#setup).
+
 ## License
 MIT
