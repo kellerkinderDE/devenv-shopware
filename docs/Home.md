@@ -10,7 +10,7 @@ Add the following files to the project `.gitignore` file:
 - `devenv.local.nix`
 
 # Options
-A full list of options can be found [here](Options.md).
+A full list of options can be found [here](https://github.com/kellerkinderDE/devenv-shopware/wiki/Options).
 
 # Different PHP versions
 If you want to use a specific PHP version, you can set the following versions
