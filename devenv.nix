@@ -5,31 +5,31 @@ let
 
   phpConfig = lib.strings.concatStrings [
     ''
-      memory_limit = 2G
-      pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
-      mysqli.default_socket = ''${MYSQL_UNIX_PORT}
-      blackfire.agent_socket = "${config.services.blackfire.socket}";
-      realpath_cache_ttl = 3600
-      session.gc_probability = 0
-      display_errors = On
-      display_startup_errors = true
-      error_reporting = E_ALL
-      html_errors = true
-      assert.active = 0
-      zend.detect_unicode = 0
-      opcache.memory_consumption = 256M
-      opcache.interned_strings_buffer = 20
-      opcache.enable_file_override = 1
-      opcache.enable_cli = 1
-      opcache.enabled = 1
-      zend.assertions = 0
-      short_open_tag = 0
-      xdebug.mode = "debug"
-      xdebug.start_with_request = "trigger"
-      xdebug.discover_client_host = 1
-      xdebug.var_display_max_depth = -1
-      xdebug.var_display_max_data = -1
-      xdebug.var_display_max_children = -1
+    memory_limit = 2G
+    pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
+    mysqli.default_socket = ''${MYSQL_UNIX_PORT}
+    blackfire.agent_socket = "${config.services.blackfire.socket}";
+    realpath_cache_ttl = 3600
+    session.gc_probability = 0
+    display_errors = On
+    display_startup_errors = true
+    error_reporting = E_ALL
+    html_errors = true
+    assert.active = 0
+    zend.detect_unicode = 0
+    opcache.memory_consumption = 256M
+    opcache.interned_strings_buffer = 20
+    opcache.enable_file_override = 1
+    opcache.enable_cli = 1
+    opcache.enabled = 1
+    zend.assertions = 0
+    short_open_tag = 0
+    xdebug.mode = "debug"
+    xdebug.start_with_request = "trigger"
+    xdebug.discover_client_host = 1
+    xdebug.var_display_max_depth = -1
+    xdebug.var_display_max_data = -1
+    xdebug.var_display_max_children = -1
     ''
     cfg.additionalPhpConfig
   ];
@@ -42,7 +42,7 @@ let
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
     extraConfig = phpConfig;
   };
 
@@ -51,7 +51,7 @@ let
       ++ [ xdebug ]
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
-      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
+      ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions );
     extraConfig = phpConfig;
   };
 
@@ -96,13 +96,13 @@ let
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
     if [[ "$1" == "" ]]; then
-      echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
-      exit
+        echo "Please set devenv configuration for kellerkinder.importDatabaseDumps"
+        exit
     fi
 
     if ! $DEVENV_PROFILE/bin/mysqladmin ping > /dev/null 2>&1; then
-      echo "MySQL server is dead or has gone away! devenv up?"
-      exit
+        echo "MySQL server is dead or has gone away! devenv up?"
+        exit
     fi
 
     TARGETFOLDER="${config.env.DEVENV_STATE}/importdb"
@@ -119,8 +119,8 @@ let
       ${pkgs.curl}/bin/curl -s --create-dirs "$1" --output "$TARGETFOLDER/latest.sql.zip"
       ${pkgs.unzip}/bin/unzip -qq -j -o "$TARGETFOLDER/latest.sql.zip" '*.sql' -d "$TARGETFOLDER"
     else
-      echo "Unsupported file type for file at $1"
-      exit
+        echo "Unsupported file type for file at $1"
+        exit
     fi
 
     rm -f "$TARGETFOLDER/latest.sql.*"
@@ -128,8 +128,8 @@ let
     SQL_FILE=$(find "$TARGETFOLDER" -name "*.sql" | head -n 1)
 
     if [[ "$SQL_FILE" == "" ]]; then
-      echo "No SQL file found"
-      exit
+        echo "No SQL file found"
+        exit
     fi
 
     LANG=C LC_CTYPE=C LC_ALL=C ${pkgs.gnused}/bin/sed -i -e 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/' "$SQL_FILE"
@@ -176,6 +176,16 @@ in {
       description = "Additional PHP extensions";
       default = [ ];
       example = [ "mailparse" ];
+    };
+
+    additionalMysqldSettings = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Additional mysqld settings";
+      example = {
+         sync_binlog = "0";
+         sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
+      };
     };
 
     additionalVhostConfig = lib.mkOption {
@@ -276,27 +286,27 @@ in {
       enable = lib.mkDefault true;
       config = ''
         {
-          auto_https disable_redirects
+      auto_https disable_redirects
         }
       '';
       virtualHosts."127.0.0.1:8000" = lib.mkDefault {
         serverAliases = cfg.additionalServerAlias;
         extraConfig = lib.strings.concatStrings [
           ''
-            @default {
-              not path ${cfg.staticFilePaths}
-              not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-            }
-            @debugger {
-              not path ${cfg.staticFilePaths}
-              expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
-            }
+        @default {
+          not path ${cfg.staticFilePaths}
+          not expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+        }
+        @debugger {
+          not path ${cfg.staticFilePaths}
+          expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
+        }
 
-            tls internal
+        tls internal
 
-            root * ${cfg.documentRoot}
+        root * ${cfg.documentRoot}
 
-            encode zstd gzip
+        encode zstd gzip
 
             handle /media/* {
                 ${lib.strings.optionalString (cfg.fallbackRedirectMediaUrl != "") ''
@@ -322,11 +332,11 @@ in {
                 file_server
             }
 
-            log {
-              output stderr
-              format console
-              level ERROR
-            }
+        log {
+          output stderr
+          format console
+          level ERROR
+        }
           ''
           cfg.additionalVhostConfig
         ];
@@ -342,30 +352,32 @@ in {
         ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
       }];
       settings = {
-        mysqld = {
+        mysqld = lib.trivial.mergeAttrs {
           group_concat_max_len = 2048;
           key_buffer_size = 16777216;
           max_allowed_packet = 134217728;
           sync_binlog = 0;
           table_open_cache = 1024;
           log_bin_trust_function_creators = 1;
-        };
-        mysql = {
-          user = "shopware";
-          password = "shopware";
-          host = "127.0.0.1";
-        };
-        mysqldump = {
-          user = "shopware";
-          password = "shopware";
-          host = "127.0.0.1";
-        };
-        mysqladmin = {
-          user = "shopware";
-          password = "shopware";
-          host = "127.0.0.1";
-        };
+        }
+        cfg.additionalMysqldSettings
+      ;
+      mysql = {
+        user = "shopware";
+        password = "shopware";
+        host = "127.0.0.1";
       };
+      mysqldump = {
+        user = "shopware";
+        password = "shopware";
+        host = "127.0.0.1";
+      };
+      mysqladmin = {
+        user = "shopware";
+        password = "shopware";
+        host = "127.0.0.1";
+      };
+    };
     };
 
     services.redis.enable = lib.mkDefault true;
@@ -415,7 +427,7 @@ in {
       CONSOLE=${config.env.DEVENV_ROOT}/bin/console
 
       if test -f "$CONSOLE"; then
-        exec $CONSOLE cache:clear
+          exec $CONSOLE cache:clear
       fi
     '';
 
@@ -432,13 +444,13 @@ in {
       read answer
 
       if [[ "$answer" != "y" ]]; then
-        echo "Alright, we will stop here."
-        exit
+          echo "Alright, we will stop here."
+          exit
       fi
 
       ${lib.concatMapStrings (dump: ''
-        echo "Importing ${dump}"
-        ${importDbHelper} ${dump}
+         echo "Importing ${dump}"
+         ${importDbHelper} ${dump}
       '') cfg.importDatabaseDumps}
 
       ${scriptUpdateConfig}

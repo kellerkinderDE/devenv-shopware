@@ -56,6 +56,17 @@ kellerkinder.additionalVhostConfig = ''
 '';
 ```
 
+### kellerkinder.additionalMysqldSettings
+Define additional settings for mysqld server.
+
+*_Example_*
+```
+kellerkinder.additionalMysqldSettings = {
+   sync_binlog = "0";
+   sql_mode = "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
+};
+```
+
 # kellerkinder.enableRabbitMq
 Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
