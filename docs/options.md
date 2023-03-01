@@ -1,7 +1,7 @@
 # Options
 
 ### kellerkinder.phpVersion
-Allows to define the used PHP Version. For supported versions, see [Different PHP versions](home#different-php-versions)
+Allows to define the used PHP Version. For supported versions, see [Different PHP versions](home.md#different-php-versions)
 
 *_Example_*
 ```
