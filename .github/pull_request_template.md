@@ -16,4 +16,4 @@ Therefore you are given this description template.
 ### 5. Checklist
 
 - [ ] I have rebased my changes to remove merge conflicts
-- [ ] I have written or adjusted the README according to my changes
+- [ ] I have written or adjusted the documentation according to my changes
