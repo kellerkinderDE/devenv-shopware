@@ -10,7 +10,7 @@ Add the following files to the project `.gitignore` file:
 - `devenv.local.nix`
 
 # Options
-A full list of options can be found [here](docs/options.md).
+A full list of options can be found [here](options.md).
 
 # Different PHP versions
 If you want to use a specific PHP version, you can set the following versions
