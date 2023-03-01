@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - docs/**
+      - .github/workflows/publish_docs_to_wiki.yml
     branches:
       - main
 
