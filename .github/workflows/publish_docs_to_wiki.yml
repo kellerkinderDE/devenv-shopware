@@ -11,6 +11,7 @@ jobs:
   publish_docs_to_wiki:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@main
       - name: Upload Docs to Wiki
         uses: docker://decathlon/wiki-page-creator-action:latest
         env:
