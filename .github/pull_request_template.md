@@ -1,7 +1,7 @@
 <!--
 Thank you for contributing to our devenv project!
 
-It would be helpful, if you gave us as much information as you could to process your pull request better.
+It would be helpful if you could provide us with as much information as possible so we can better process your pull request.
 Therefore you are given this description template.
 -->
 
