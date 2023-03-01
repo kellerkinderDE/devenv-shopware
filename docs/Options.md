@@ -1,14 +1,12 @@
-# Options
-
-### kellerkinder.phpVersion
-Allows to define the used PHP Version. For supported versions, see [Different PHP versions](home.md#different-php-versions)
+# kellerkinder.phpVersion
+Allows to define the used PHP Version. For supported versions, see [Different PHP versions](Home.md#different-php-versions)
 
 *_Example_*
 ```
 kellerkinder.phpVersion = "php80";
 ```
 
-### kellerkinder.systemConfig
+# kellerkinder.systemConfig
 Define shopware systemconfig values.
 
 *_Example_*
@@ -18,7 +16,7 @@ kellerkinder.systemConfig = {
 };
 ```
 
-### kellerkinder.additionalPhpConfig
+# kellerkinder.additionalPhpConfig
 Define additional php.ini settings, which are used for php-fpm and php-cli.
 
 *_Example_*
@@ -28,7 +26,7 @@ kellerkinder.additionalPhpConfig = ''
 '';
 ```
 
-### kellerkinder.additionalPhpExtensions
+# kellerkinder.additionalPhpExtensions
 Define additional PHP extensions that are included in php-fpm and php-cli.
 
 *_Example_*
@@ -38,7 +36,7 @@ kellerkinder.additionalPhpExtensions = [
 ];
 ```
 
-### kellerkinder.additionalServerAlias
+# kellerkinder.additionalServerAlias
 Define additional server aliases that are added to caddy.
 
 *_Example_*
@@ -48,7 +46,7 @@ kellerkinder.additionalServerAlias = [
 ];
 ```
 
-### kellerkinder.additionalVhostConfig
+# kellerkinder.additionalVhostConfig
 Define additional vhost configurations that are appended to the general vhost configuration.
 
 *_Example_*
@@ -58,7 +56,7 @@ kellerkinder.additionalVhostConfig = ''
 '';
 ```
 
-### kellerkinder.enableRabbitMq
+# kellerkinder.enableRabbitMq
 Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
 *_Example_*
@@ -66,7 +64,7 @@ Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the 
 kellerkinder.enableRabbitMq = true;
 ```
 
-### kellerkinder.enableElasticsearch
+# kellerkinder.enableElasticsearch
 Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
 MySQL search.
 
@@ -75,7 +73,7 @@ MySQL search.
 kellerkinder.enableElasticsearch = true;
 ```
 
-### kellerkinder.importDatabaseDumps
+# kellerkinder.importDatabaseDumps
 
 You can import a list of links of database dumps by using the command `importdb`.
 Define a list of links like in the example below.
@@ -93,7 +91,7 @@ kellerkinder.importDatabaseDumps = [
 ];
 ```
 
-### kellerkinder.documentRoot
+# kellerkinder.documentRoot
 Changes the default document root (`public`) of caddy to the specified value
 
 *_Example for the current folder_*
@@ -101,7 +99,7 @@ Changes the default document root (`public`) of caddy to the specified value
 kellerkinder.documentRoot = ".";
 ```
 
-### kellerkinder.staticFilePaths
+# kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
 **NOTE**: The path can not be empty!
@@ -111,7 +109,7 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-### kellerkinder.fallbackRedirectMediaUrl
+# kellerkinder.fallbackRedirectMediaUrl
 Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*

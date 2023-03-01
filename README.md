@@ -12,7 +12,7 @@ tightly tailored to the needs of our team members working on various projects wi
 - Inherits all default devenv features and services
 
 ## Setup & Usage
-A description about the setup and usage can be found in the [Wiki](docs/home.md#setup).
+A description about the setup and usage can be found in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki).
 
 ## More Information:
 - https://devenv.sh/
