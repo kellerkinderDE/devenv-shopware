@@ -1,0 +1,32 @@
+name: Publish docs to Wiki
+
+on:
+  push:
+    paths:
+      - docs/**
+    branches:
+      - main
+
+jobs:
+  publish_docs_to_wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Replace .md for wiki compatibility
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "\\.md"
+          replace: ""
+          regex: true
+          include: "docs/*.md"
+      - name: Upload Docs to Wiki
+        uses: docker://decathlon/wiki-page-creator-action:latest
+        env:
+          GH_PAT: ${{ secrets.WIKI_ACTION_TOKEN_ServiceUser }}
+          ACTION_MAIL: login@kellerkinder.de
+          ACTION_NAME: kellerkinder-service
+          OWNER: kellerkinderDE
+          REPO_NAME: devenv-shopware
+          WIKI_PUSH_MESSAGE: "Auto publish docs to wiki"
+          TRANSLATE_UNDERSCORE_TO_SPACE: true
+          MD_FOLDER: docs
