@@ -15,7 +15,7 @@ jobs:
       - name: Replace .md for wiki compatibility
         uses: jacobtomlinson/gha-find-replace@v3
         with:
-          find: "\.md"
+          find: "\\.md"
           replace: ""
           regex: true
           include: "docs/*.md"
