@@ -5,8 +5,6 @@ on:
     paths:
       - docs/**
       - .github/workflows/publish_docs_to_wiki.yml
-    branches:
-      - main
 
 jobs:
   publish_docs_to_wiki:
@@ -21,6 +19,7 @@ jobs:
           regex: true
           include: "docs/*.md"
       - name: Upload Docs to Wiki
+        if: github.ref_name == 'main'
         uses: docker://decathlon/wiki-page-creator-action:latest
         env:
           GH_PAT: ${{ secrets.WIKI_ACTION_TOKEN_ServiceUser }}
