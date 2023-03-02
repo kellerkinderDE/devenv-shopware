@@ -58,6 +58,11 @@ let
   entryScript = pkgs.writeScript "entryScript" ''
     set -euo pipefail
 
+    if [ ! -f $DEVENV_PROFILE/bin/mysqladmin ]; then
+      echo -e "mysqladmin missing, skips further entryscript processing"
+      ${pkgs.coreutils}/bin/sleep infinity
+    fi
+
     while ! $DEVENV_PROFILE/bin/mysqladmin ping --silent; do
       ${pkgs.coreutils}/bin/sleep 1
     done
