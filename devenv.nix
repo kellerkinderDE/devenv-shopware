@@ -67,10 +67,20 @@ let
       ${pkgs.coreutils}/bin/sleep 1
     done
 
+    while ! [[ $($DEVENV_PROFILE/bin/mysql shopware -s -N -e 'SHOW DATABASES LIKE "shopware";') ]] ; do
+      ${pkgs.coreutils}/bin/sleep 1
+    done
+
+    TABLE=$(mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
+
+    if [[ $TABLE == "" ]]; then
+      echo "Table system_config is missing. Run >updateSystemConfig< manually to ensure the dev status of your setup!"
+      ${pkgs.coreutils}/bin/sleep infinity
+    fi
+
     ${scriptUpdateConfig}
 
     echo -e "Startup completed"
-
     ${pkgs.coreutils}/bin/sleep infinity
   '';
 
@@ -82,8 +92,7 @@ let
 
     echo "Updating system config"
 
-    if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ];
-    then
+    if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ]; then
       echo "Vendor folder or console not found. Please run composer install."
       exit 1
     fi
@@ -96,7 +105,7 @@ let
 
     # default config
     $CONSOLE system:config:set core.mailerSettings.emailAgent "" || exit 1
-    echo "System config core.mailerSettings.emailAgent set to ''''"
+    echo "System config core.mailerSettings.emailAgent set to '''"
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
@@ -410,10 +419,18 @@ in {
         SHOPWARE_ES_HOSTS = "127.0.0.1";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
       })
+      (lib.mkIf config.services.rabbitmq.enable {
+        RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
+      })
     ];
 
     # Processes
     processes.entryscript.exec = "${entryScript}";
+
+    # Config related scripts
+    scripts.updateSystemConfig.exec = ''
+      ${scriptUpdateConfig}
+    '';
 
     # Symfony related scripts
     scripts.cc.exec = ''
