@@ -62,10 +62,20 @@ let
       ${pkgs.coreutils}/bin/sleep 1
     done
 
+    while ! [[ $($DEVENV_PROFILE/bin/mysql shopware -s -N -e 'SHOW DATABASES LIKE "shopware";') ]] ; do
+      ${pkgs.coreutils}/bin/sleep 1
+    done
+
+    TABLE=$(mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
+
+    if [[ $TABLE == "" ]]; then
+      echo "Table system_config is missing, skipping config update"
+      ${pkgs.coreutils}/bin/sleep infinity
+    fi
+
     ${scriptUpdateConfig}
 
     echo -e "Startup completed"
-
     ${pkgs.coreutils}/bin/sleep infinity
   '';
 
@@ -91,7 +101,7 @@ let
 
     # default config
     $CONSOLE system:config:set core.mailerSettings.emailAgent "" || exit 1
-    echo "System config core.mailerSettings.emailAgent set to ''''"
+    echo "System config core.mailerSettings.emailAgent set to '''"
   '';
 
   importDbHelper = pkgs.writeScript "importDbHelper" ''
@@ -345,6 +355,11 @@ in {
           password = "shopware";
           host = "127.0.0.1";
         };
+        mysqlshow = {
+          user = "shopware";
+          password = "shopware";
+          host = "127.0.0.1";
+        };
       };
     };
 
@@ -384,6 +399,8 @@ in {
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
+
+        RABBITMQ_NODENAME = "rabbit@localhost";
       })
     ];
 
