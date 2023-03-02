@@ -413,8 +413,9 @@ in {
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
-
-        RABBITMQ_NODENAME = "rabbit@127.0.0.1";
+      })
+      (lib.mkIf config.services.rabbitmq.enable {
+        RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
       })
     ];
 
