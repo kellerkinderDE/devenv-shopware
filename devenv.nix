@@ -69,7 +69,7 @@ let
     TABLE=$(mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
 
     if [[ $TABLE == "" ]]; then
-      echo "Table system_config is missing, skipping config update"
+      echo "Table system_config is missing. Run >updateSystemConfig< manually to ensure the dev status of your setup!"
       ${pkgs.coreutils}/bin/sleep infinity
     fi
 
@@ -87,8 +87,7 @@ let
 
     echo "Updating system config"
 
-    if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ];
-    then
+    if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ]; then
       echo "Vendor folder or console not found. Please run composer install."
       exit 1
     fi
@@ -395,12 +394,17 @@ in {
         SHOPWARE_ES_HOSTS = "127.0.0.1";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
 
-        RABBITMQ_NODENAME = "rabbit@localhost";
+        RABBITMQ_NODENAME = "rabbit@127.0.0.1";
       })
     ];
 
     # Processes
     processes.entryscript.exec = "${entryScript}";
+
+    # Config related scripts
+    scripts.updateSystemConfig.exec = ''
+      ${scriptUpdateConfig}
+    '';
 
     # Symfony related scripts
     scripts.cc.exec = ''
