@@ -355,11 +355,6 @@ in {
           password = "shopware";
           host = "127.0.0.1";
         };
-        mysqlshow = {
-          user = "shopware";
-          password = "shopware";
-          host = "127.0.0.1";
-        };
       };
     };
 
