@@ -56,7 +56,7 @@ kellerkinder.additionalVhostConfig = ''
 '';
 ```
 
-### kellerkinder.additionalMysqldSettings
+# kellerkinder.additionalMysqldSettings
 Define additional settings for mysqld server.
 
 *_Example_*
