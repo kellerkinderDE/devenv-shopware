@@ -1,3 +1,4 @@
+allowUnfree: true
 inputs:
   kellerkinder:
     url: git+https://github.com/kellerkinderDE/devenv-shopware
