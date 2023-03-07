@@ -36,6 +36,7 @@ let
 
   phpVersion = if builtins.hasAttr "PHP_VERSION" config.env then config.env.PHP_VERSION else cfg.phpVersion;
   package = inputs.phps.packages.${builtins.currentSystem}.${phpVersion};
+  caddyHttps = if cfg.enableHttps then "https" else "http";
 
   phpPackage = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
@@ -192,6 +193,12 @@ in {
       example = [ "mailparse" ];
     };
 
+    enableHttps = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable HTTPS. If this is active, the scripts ./bin/watch-*.sh will not work.";
+    };
+
     additionalVhostConfig = lib.mkOption {
       type = lib.types.str;
       default = "";
@@ -293,7 +300,7 @@ in {
           auto_https disable_redirects
         }
       '';
-      virtualHosts."127.0.0.1:8000" = lib.mkDefault {
+      virtualHosts."${caddyHttps}://127.0.0.1:8000" = lib.mkDefault {
         serverAliases = cfg.additionalServerAlias;
         extraConfig = lib.strings.concatStrings [
           ''
@@ -306,7 +313,9 @@ in {
               expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
             }
 
+            ${lib.strings.optionalString cfg.enableHttps ''
             tls internal
+            '' }
 
             root * ${cfg.documentRoot}
 
