@@ -1,5 +1,4 @@
 { pkgs, config, inputs, lib, ... }:
-
 let
   cfg = config.kellerkinder;
 
@@ -14,14 +13,14 @@ in {
   options.kellerkinder = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
       description = "Enables the Kellerkinder devenv environment";
+      default = true;
     };
 
     phpVersion = lib.mkOption {
       type = lib.types.str;
-      default = "php81";
       description = "PHP Version";
+      default = "php81";
     };
 
     systemConfig = lib.mkOption {
@@ -35,8 +34,8 @@ in {
 
     additionalPhpConfig = lib.mkOption {
       type = lib.types.str;
-      default = "";
       description = "Additional php.ini configuration";
+      default = "";
       example = ''
         memory_limit = 0
       '';
@@ -51,8 +50,8 @@ in {
 
     additionalVhostConfig = lib.mkOption {
       type = lib.types.str;
-      default = "";
       description = "Additional vhost configuration";
+      default = "";
     };
 
     domains = lib.mkOption {
@@ -64,14 +63,14 @@ in {
 
     enableElasticsearch = lib.mkOption {
       type = lib.types.bool;
-      default = false;
       description = "Enables Elasticsearch";
+      default = false;
     };
 
     enableRabbitMq = lib.mkOption {
       type = lib.types.bool;
-      default = false;
       description = "Enables RabbitMQ";
+      default = false;
     };
 
     importDatabaseDumps = lib.mkOption {
@@ -86,28 +85,35 @@ in {
 
     documentRoot = lib.mkOption {
       type = lib.types.str;
-      default = "public";
       description = "Sets the docroot of caddy";
+      default = "public";
     };
 
     staticFilePaths = lib.mkOption {
       type = lib.types.str;
-      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
       description = ''Sets the matcher paths to be "ignored" by caddy'';
+      default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
     };
 
     fallbackMediaUrl = lib.mkOption {
       type = lib.types.str;
+      description = "Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.";
       default = "";
-      description = ''Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.'';
+    };
+
+    additionalPackages = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      description = "Additional packages to be installed";
+      default = [ ];
+      example = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
     };
   };
 
   config = lib.mkIf cfg.enable {
-    packages = lib.mkDefault [
+    packages = [
       pkgs.jq
       pkgs.gnupatch
-    ];
+    ] ++ cfg.additionalPackages;
 
     languages.javascript = {
       enable = lib.mkDefault true;

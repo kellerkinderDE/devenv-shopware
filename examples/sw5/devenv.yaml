@@ -1,4 +1,6 @@
 allowUnfree: true
+imports:
+  - kellerkinder
 inputs:
   kellerkinder:
     url: git+https://github.com/kellerkinderDE/devenv-shopware
@@ -8,6 +10,4 @@ inputs:
     inputs:
       nixpkgs:
         follows: nixpkgs
-imports:
-  - kellerkinder
 

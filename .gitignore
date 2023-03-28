@@ -1,6 +1,6 @@
 .idea
 
 # Devenv
-.devenv*
-.direnv
+/.devenv*
+/.direnv
 devenv.local.nix
