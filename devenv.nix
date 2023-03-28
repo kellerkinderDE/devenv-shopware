@@ -422,6 +422,9 @@ in {
       (lib.mkIf config.services.rabbitmq.enable {
         RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
       })
+      (lib.mkIf config.services.redis.enable {
+        REDIS_DSN = "redis://127.0.0.1:6379";
+      })
     ];
 
     # Processes
