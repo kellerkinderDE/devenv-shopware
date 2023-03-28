@@ -8,6 +8,6 @@ inputs:
     inputs:
       nixpkgs:
         follows: nixpkgs
-  imports:
-    - kellerkinder
+imports:
+  - kellerkinder
 
