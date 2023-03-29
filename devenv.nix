@@ -8,7 +8,7 @@ in {
   imports = [
     (lib.mkRenamedOptionModule [ "kellerkinder" "additionalServerAlias" ] [ "kellerkinder" "domains" ])
     (lib.mkRenamedOptionModule [ "kellerkinder" "fallbackRedirectMediaUrl" ] [ "kellerkinder" "fallbackMediaUrl" ])
-  ] ++ (listEntries ./modules) ++ (listEntries ./services);
+  ] ++ (listEntries ./modules);
 
   options.kellerkinder = {
     enable = lib.mkOption {

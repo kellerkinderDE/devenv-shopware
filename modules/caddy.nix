@@ -81,11 +81,6 @@ in {
     hosts = myHosts;
     certificates = vhostDomains;
 
-    enterShell = ''
-        echo $myHosts
-        echo $caddyHostConfig
-      '';
-
     services.caddy = {
      enable = lib.mkDefault true;
      virtualHosts= caddyHostConfig;
