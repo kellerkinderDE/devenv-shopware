@@ -38,9 +38,20 @@ let
   zoneDataFile = pkgs.writeText "zonefile.test" (builtins.concatStringsSep "\n"
     ([ zoneData ]));
 
+  resolverData = ''
+  nameserver 127.0.0.1
+  port 1053
+  '';
+
+# TODO: check for functionality und and dynamic domain handling
+
+  resolverFile = pkgs.writeText "resolver.test" (builtins.concatStringsSep "\n"
+      ([ zoneData ]));
+
   installPhase = ''
     mkdir $out
     cp $zoneDataFile $out/$zoneDataFile
+    mkdir -p /etc/resolver && cp $resolverFile /etc/resolver/test
   '';
 in
 {
@@ -68,6 +79,9 @@ in
       packages = [
         pkgs.coredns
       ];
+
+
+
 
     processes.coredns.exec = ''coredns -dns.port=1053 -conf ${configFile}'';
   };

@@ -6,7 +6,7 @@ let
   mappedHosts = lib.mapAttrsToList (name: value: { inherit name; }) cfg.domains;
 
   vhostDomains = cfg.domains ++ [ "127.0.0.1" ];
-
+  # TODO: fix error according php_fastcgi
   vhostConfig = lib.strings.concatStrings [
     ''
       @default {
@@ -63,36 +63,32 @@ let
     ''
     vhostConfig
   ];
+
+  myHosts = (lib.mkMerge (lib.forEach cfg.domains (domain: {
+   "${toString domain}" = "127.0.0.1";
+ })));
+
+  caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
+    "${toString domain}:80" = lib.mkDefault {
+      extraConfig = vhostConfig;
+    };
+    "${toString domain}:443" = lib.mkDefault {
+      extraConfig = vhostConfig;
+    };
+  })));
 in {
   config = lib.mkIf cfg.enable {
-    hosts = {
-      "example.com" = "127.0.0.1";
-    };
+    hosts = myHosts;
+    certificates = vhostDomains;
 
-    certificates = [ "127.0.0.1" ] ++ cfg.domains;
+    enterShell = ''
+        echo $myHosts
+        echo $caddyHostConfig
+      '';
 
     services.caddy = {
-      enable = lib.mkDefault true;
-      virtualHosts = lib.mkMerge [
-        (lib.concatMapStrings
-          (domain: {
-            "${domain}:80" = lib.mkDefault {
-              enable = true;
-              extraConfig = vhostConfig;
-            };
-          })
-          vhostDomains
-        )
-        (lib.concatMapStrings
-          (domain: {
-            "${domain}:443" = lib.mkDefault {
-              enable = true;
-              extraConfig = lib.replaceStrings [ "%DOMAIN%" domain ] vhostConfigSSL;
-            };
-          })
-          vhostDomains
-        )
-      ];
+     enable = lib.mkDefault true;
+     virtualHosts= caddyHostConfig;
     };
   };
 }
