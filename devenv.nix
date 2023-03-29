@@ -120,17 +120,17 @@ in {
       package = lib.mkDefault pkgs.nodejs-16_x;
     };
 
-    services.redis.enable = lib.mkDefault true;
-
     services.adminer.enable = lib.mkDefault true;
     services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
 
-    services.mailhog.enable = true;
-
     services.elasticsearch.enable = cfg.enableElasticsearch;
+
+    services.mailhog.enable = true;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
+
+    services.redis.enable = lib.mkDefault true;
 
     # Environment variables
     env = lib.mkMerge [
@@ -160,6 +160,9 @@ in {
       (lib.mkIf config.services.rabbitmq.enable {
         RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
         MESSENGER_TRANSPORT_DSN = "amqp://guest:guest@localhost:5672/%2f";
+      })
+      (lib.mkIf config.services.redis.enable {
+        REDIS_DSN = "redis://127.0.0.1:6379";
       })
     ];
   };

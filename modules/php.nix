@@ -19,6 +19,7 @@ let
       zend.detect_unicode = 0
       opcache.memory_consumption = 256M
       opcache.interned_strings_buffer = 20
+      opcache.enable_file_override = 1
       opcache.enable_cli = 1
       opcache.enabled = 1
       zend.assertions = 0

@@ -41,7 +41,7 @@ Define additional server aliases that are added to caddy.
 
 *_Example_*
 ```
-kellerkinder.additionalServerAlias = [
+kellerkinder.domains = [
    "example.com"
 ];
 ```
@@ -114,7 +114,7 @@ Fallback redirect URL for media not found on local storage. Best for CDN purpose
 
 *_Example_*
 ```
-kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
 # kellerkinder.additionalPackages
