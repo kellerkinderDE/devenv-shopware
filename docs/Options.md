@@ -99,6 +99,14 @@ Changes the default document root (`public`) of caddy to the specified value
 kellerkinder.documentRoot = ".";
 ```
 
+# kellerkinder.projectRoot
+Changes the default root of the project to the specified value
+
+*_Example for the current folder_*
+```
+kellerkinder.documentRoot = "/project";
+```
+
 # kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
