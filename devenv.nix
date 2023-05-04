@@ -94,7 +94,7 @@ let
 
     if [ ! -f "$VENDOR" ] || [ ! -f "$CONSOLE" ]; then
       echo "Vendor folder or console not found. Please run composer install."
-      exit 1
+      ${pkgs.coreutils}/bin/sleep infinity
     fi
 
     # additional config
