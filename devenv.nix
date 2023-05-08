@@ -257,7 +257,7 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
-      pkgs.pkgs.shopware-cli
+      pkgs.shopware-cli
     ] ++ cfg.additionalPackages;
 
     languages.javascript = {
