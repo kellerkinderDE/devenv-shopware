@@ -100,11 +100,11 @@ kellerkinder.documentRoot = ".";
 ```
 
 # kellerkinder.projectRoot
-Changes the default root of the project to the specified value
+Changes the default root of the project to the specified value (no `/` as pre- or suffix required)
 
-*_Example for the current folder_*
+*_Example for a `project` folder inside the current folder_*
 ```
-kellerkinder.documentRoot = "/project";
+kellerkinder.projectRoot = "project";
 ```
 
 # kellerkinder.staticFilePaths
