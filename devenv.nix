@@ -323,7 +323,7 @@ in {
 
             tls internal
 
-            root * ${cfg.documentRoot}
+            root * ${cfg.projectRoot}/${cfg.documentRoot}
 
             encode zstd gzip
 
