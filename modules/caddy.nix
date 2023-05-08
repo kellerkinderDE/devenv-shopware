@@ -31,9 +31,9 @@ in {
             encode zstd gzip
 
             handle /media/* {
-              ${lib.strings.optionalString (cfg.fallbackRedirectMediaUrl != "") ''
+              ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
               @notStatic not file
-              redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackRedirectMediaUrl}{path}
+              redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackMediaUrl}{path}
               ''}
               file_server
             }
@@ -45,10 +45,12 @@ in {
             handle {
               php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
                 trusted_proxies private_ranges
+                index shopware.php index.php
               }
 
               php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
                 trusted_proxies private_ranges
+                index shopware.php index.php
               }
 
               file_server

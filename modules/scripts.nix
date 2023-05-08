@@ -137,6 +137,10 @@ in {
     ${scriptUpdateConfig}
   '';
 
+  scripts.debug.exec = ''
+    XDEBUG_SESSION=1 ${phpXdebug}/bin/php "$@"
+  '';
+
   # Processes
   processes.entryscript.exec = "${entryScript}";
 }

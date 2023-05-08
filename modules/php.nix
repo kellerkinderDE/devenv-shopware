@@ -84,9 +84,5 @@ in {
       };
       fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
     };
-
-    scripts.debug.exec = ''
-      XDEBUG_SESSION=1 ${phpXdebug}/bin/php "$@"
-    '';
   };
 }
