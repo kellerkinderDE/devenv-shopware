@@ -452,7 +452,7 @@ in {
 
     # Symfony related scripts
     scripts.cc.exec = ''
-      CONSOLE=${config.env.DEVENV_ROOT}${cfg.projectRoot}/bin/console
+      CONSOLE=${config.env.DEVENV_ROOT}/${cfg.projectRoot}/bin/console
 
       if test -f "$CONSOLE"; then
         exec $CONSOLE cache:clear
