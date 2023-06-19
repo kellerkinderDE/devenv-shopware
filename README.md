@@ -10,6 +10,7 @@ tightly tailored to the needs of our team members working on various projects wi
 - Enables Xdebug without a performance impact when not using it
 - Easily configurable PHP Version
 - Inherits all default devenv features and services
+- Pre-installed [shopware-cli](https://sw-cli.fos.gg/)
 
 ## Setup & Usage
 A description about the setup and usage can be found in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki).

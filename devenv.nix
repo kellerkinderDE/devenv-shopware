@@ -54,9 +54,9 @@ in {
       default = "";
     };
 
-    domains = lib.mkOption {
+    additionalServerAlias = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "Domains to be used for the vhost";
+      description = "Additional server alias";
       default = [ ];
       example = [ "example.com" ];
     };
@@ -89,15 +89,22 @@ in {
       default = "public";
     };
 
+    projectRoot = lib.mkOption {
+      type = lib.types.str;
+      description = "Root of the project as path from the file devenv.nix";
+      default = ".";
+      example = "project";
+    };
+
     staticFilePaths = lib.mkOption {
       type = lib.types.str;
       description = ''Sets the matcher paths to be "ignored" by caddy'';
       default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
     };
 
-    fallbackMediaUrl = lib.mkOption {
+    fallbackRedirectMediaUrl = lib.mkOption {
       type = lib.types.str;
-      description = "Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.";
+      description = ''Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.'';
       default = "";
     };
 
@@ -113,6 +120,7 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
+      pkgs.shopware-cli
     ] ++ cfg.additionalPackages;
 
     languages.javascript = {
@@ -120,17 +128,17 @@ in {
       package = lib.mkDefault pkgs.nodejs-16_x;
     };
 
+    services.redis.enable = lib.mkDefault true;
+
     services.adminer.enable = lib.mkDefault true;
     services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
 
-    services.elasticsearch.enable = cfg.enableElasticsearch;
-
     services.mailhog.enable = true;
+
+    services.elasticsearch.enable = cfg.enableElasticsearch;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
-
-    services.redis.enable = lib.mkDefault true;
 
     # Environment variables
     env = lib.mkMerge [
@@ -159,7 +167,6 @@ in {
       })
       (lib.mkIf config.services.rabbitmq.enable {
         RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
-        MESSENGER_TRANSPORT_DSN = "amqp://guest:guest@localhost:5672/%2f";
       })
       (lib.mkIf config.services.redis.enable {
         REDIS_DSN = "redis://127.0.0.1:6379";

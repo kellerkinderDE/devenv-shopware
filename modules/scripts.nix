@@ -35,8 +35,8 @@ let
   systemConfigEntries = lib.mapAttrsToList (name: value: { inherit name value; }) cfg.systemConfig;
 
   scriptUpdateConfig = pkgs.writeScript "scriptUpdateConfig" ''
-    VENDOR=${config.env.DEVENV_ROOT}/vendor/autoload.php
-    CONSOLE=${config.env.DEVENV_ROOT}/bin/console
+    VENDOR=${config.env.DEVENV_ROOT}/${cfg.projectRoot}/vendor/autoload.php
+    CONSOLE=${config.env.DEVENV_ROOT}/${cfg.projectRoot}/bin/console
 
     echo "Updating system config"
 
@@ -109,7 +109,7 @@ in {
 
   # Symfony related scripts
   scripts.cc.exec = ''
-    CONSOLE=${config.env.DEVENV_ROOT}/bin/console
+    CONSOLE=${config.env.DEVENV_ROOT}/${cfg.projectRoot}/bin/console
 
     if test -f "$CONSOLE"; then
       exec $CONSOLE cache:clear

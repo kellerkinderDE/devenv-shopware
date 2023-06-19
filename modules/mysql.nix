@@ -6,6 +6,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.mysql = {
       enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.mysql80;
       initialDatabases = lib.mkDefault [{ name = "shopware"; }];
       ensureUsers = lib.mkDefault [{
         name = "shopware";

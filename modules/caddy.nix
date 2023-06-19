@@ -12,7 +12,7 @@ in {
         }
       '';
       virtualHosts."127.0.0.1:8000" = lib.mkDefault {
-        serverAliases = cfg.domains;
+        serverAliases = cfg.additionalServerAlias;
         extraConfig = lib.strings.concatStrings [
           ''
             @default {
@@ -26,14 +26,14 @@ in {
 
             tls internal
 
-            root * ${cfg.documentRoot}
+            root * ${cfg.projectRoot}/${cfg.documentRoot}
 
             encode zstd gzip
 
             handle /media/* {
-              ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
+              ${lib.strings.optionalString (cfg.fallbackRedirectMediaUrl != "") ''
               @notStatic not file
-              redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackMediaUrl}{path}
+              redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackRedirectMediaUrl}{path}
               ''}
               file_server
             }
@@ -45,12 +45,10 @@ in {
             handle {
               php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
                 trusted_proxies private_ranges
-                index shopware.php index.php
               }
 
               php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
                 trusted_proxies private_ranges
-                index shopware.php index.php
               }
 
               file_server
