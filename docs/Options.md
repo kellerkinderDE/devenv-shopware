@@ -133,7 +133,7 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-# kellerkinder.fallbackRedirectMediaUrl
+# kellerkinder.fallbackMediaUrl
 Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*
