@@ -41,7 +41,7 @@ Define additional server aliases that are added to caddy.
 
 *_Example_*
 ```
-kellerkinder.additionalServerAlias = [
+kellerkinder.domains = [
    "example.com"
 ];
 ```
@@ -99,6 +99,14 @@ Changes the default document root (`public`) of caddy to the specified value
 kellerkinder.documentRoot = ".";
 ```
 
+# kellerkinder.projectRoot
+Changes the default root of the project to the specified value (no `/` as pre- or suffix required)
+
+*_Example for a `project` folder inside the current folder_*
+```
+kellerkinder.projectRoot = "project";
+```
+
 # kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
@@ -114,5 +122,13 @@ Fallback redirect URL for media not found on local storage. Best for CDN purpose
 
 *_Example_*
 ```
-kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+```
+
+# kellerkinder.additionalPackages
+Define additional PHP extensions that are included in the devenv environment.
+
+*_Example_*
+```
+kellerkinder.additionalPackages = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
 ```

@@ -1,3 +1,5 @@
+allowUnfree: true
+
 inputs:
   nixpkgs:
     url: github:NixOS/nixpkgs/nixos-unstable
@@ -6,4 +8,3 @@ inputs:
     inputs:
       nixpkgs:
         follows: nixpkgs
-
