@@ -6,7 +6,6 @@ let
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
 in {
   imports = [
-    (lib.mkRenamedOptionModule [ "kellerkinder" "additionalServerAlias" ] [ "kellerkinder" "domains" ])
     (lib.mkRenamedOptionModule [ "kellerkinder" "fallbackRedirectMediaUrl" ] [ "kellerkinder" "fallbackMediaUrl" ])
   ] ++ (listEntries ./modules);
 
@@ -54,6 +53,12 @@ in {
       default = "";
     };
 
+    enableTls = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enables HTTPS/TLS in addition to HTTP.";
+    };
+
     additionalServerAlias = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       description = "Additional server alias";
@@ -89,6 +94,12 @@ in {
       default = "public";
     };
 
+    indexFile = lib.mkOption {
+      type = lib.types.str;
+      description = "Sets the caddy index file for the document root";
+      default = "index.php";
+    };
+
     projectRoot = lib.mkOption {
       type = lib.types.str;
       description = "Root of the project as path from the file devenv.nix";
@@ -102,9 +113,9 @@ in {
       default = "/theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*";
     };
 
-    fallbackRedirectMediaUrl = lib.mkOption {
+    fallbackMediaUrl = lib.mkOption {
       type = lib.types.str;
-      description = ''Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.'';
+      description = ''Fallback URL for media not found on local storage. Best for CDN purposes without downloading them.'';
       default = "";
     };
 
@@ -125,7 +136,7 @@ in {
 
     languages.javascript = {
       enable = lib.mkDefault true;
-      package = lib.mkDefault pkgs.nodejs-16_x;
+      package = lib.mkDefault pkgs.nodejs-18_x;
     };
 
     services.redis.enable = lib.mkDefault true;
@@ -147,8 +158,8 @@ in {
         MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
         MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-        APP_URL = lib.mkDefault "https://127.0.0.1:8000";
-        CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
+        APP_URL = lib.mkDefault "http://127.0.0.1:8000";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:8000";
 
         APP_SECRET = lib.mkDefault "devsecret";
 

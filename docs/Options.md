@@ -56,6 +56,14 @@ kellerkinder.additionalVhostConfig = ''
 '';
 ```
 
+# kellerkinder.enableTls
+Enables caddy to serve the default vhost with HTTPS/TLS in addition to HTTP.
+
+*_Example_*
+```
+kellerkinder.enableTls = false;
+```
+
 # kellerkinder.enableRabbitMq
 Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
@@ -107,6 +115,14 @@ Changes the default root of the project to the specified value (no `/` as pre- o
 kellerkinder.projectRoot = "project";
 ```
 
+# kellerkinder.indexFile
+Sets the caddy index file for the document root
+
+*_Example_*
+```
+kellerkinder.indexFile = "shopware.php";
+```
+
 # kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
@@ -117,7 +133,7 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-# kellerkinder.fallbackRedirectMediaUrl
+# kellerkinder.fallbackMediaUrl
 Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*

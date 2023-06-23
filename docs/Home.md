@@ -8,6 +8,7 @@ cachix use devenv ; cachix use fossar ; cachix use shopware
 Add the following files to the project `.gitignore` file:
 - `.devenv*`
 - `devenv.local.nix`
+- `.direnv`
 
 # Options
 A full list of options can be found [here](Options.md).
