@@ -41,7 +41,7 @@ Define additional server aliases that are added to caddy.
 
 *_Example_*
 ```
-kellerkinder.domains = [
+kellerkinder.additionalServerAlias = [
    "example.com"
 ];
 ```
