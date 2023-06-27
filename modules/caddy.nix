@@ -53,7 +53,7 @@ let
     cfg.additionalVhostConfig
   ];
 
-  vhostConfigTsl = lib.strings.concatStrings [
+  vhostConfigTls = lib.strings.concatStrings [
     ''
       tls internal
     ''
@@ -62,14 +62,19 @@ let
 
   vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" ];
 
-  caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
-    "http://${toString domain}" = {
-      extraConfig = vhostConfig;
-    };
-    "https://${toString domain}" = {
-      extraConfig = vhostConfigTsl;
-    };
-  })));
+  caddyHostConfig = (lib.mkMerge
+    (lib.forEach vhostDomains (domain: {
+      "http://${toString domain}" = {
+        extraConfig = vhostConfig;
+      };
+      "https://${toString domain}" = {
+        extraConfig = vhostConfigTls;
+      };
+      "https://${toString domain}:8000" = {
+        extraConfig = vhostConfigTls;
+      };
+    }))
+  );
 in {
   config = lib.mkIf cfg.enable {
     services.caddy = {
