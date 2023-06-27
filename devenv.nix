@@ -53,12 +53,6 @@ in {
       default = "";
     };
 
-    enableTls = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Enables HTTPS/TLS in addition to HTTP.";
-    };
-
     additionalServerAlias = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       description = "Additional server alias";

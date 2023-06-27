@@ -63,10 +63,10 @@ let
   vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" ];
 
   caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
-    "http://${toString domain}" = lib.mkDefault {
+    "http://${toString domain}" = {
       extraConfig = vhostConfig;
     };
-    "https://${toString domain}" = lib.mkDefault {
+    "https://${toString domain}" = {
       extraConfig = vhostConfigTsl;
     };
   })));

@@ -56,14 +56,6 @@ kellerkinder.additionalVhostConfig = ''
 '';
 ```
 
-# kellerkinder.enableTls
-Enables caddy to serve the default vhost with HTTPS/TLS in addition to HTTP.
-
-*_Example_*
-```
-kellerkinder.enableTls = false;
-```
-
 # kellerkinder.enableRabbitMq
 Enables the RabbitMQ message broker and amqp PHP extension. Can be used for the Symfony message queue.
 
