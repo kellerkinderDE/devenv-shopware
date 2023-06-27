@@ -133,6 +133,14 @@ Fallback redirect URL for media not found on local storage. Best for CDN purpose
 kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
+# kellerkinder.fallbackMediaPaths
+Sets the paths to be redirected to the fallbackMediaUrl.
+
+*_Example_*
+```
+kellerkinder.fallbackMediaPaths = "/media/* /thumbnail/*";
+```
+
 # kellerkinder.additionalPackages
 Define additional PHP extensions that are included in the devenv environment.
 
