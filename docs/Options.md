@@ -126,7 +126,7 @@ kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.e
 ```
 
 # kellerkinder.additionalPackages
-Define additional PHP extensions that are included in the devenv environment.
+Define packages that should be installed additionally.
 
 *_Example_*
 ```
