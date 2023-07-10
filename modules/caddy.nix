@@ -18,7 +18,11 @@ let
 
       encode zstd gzip
 
-      handle /media/* {
+      @fallbackMediaPaths {
+        path ${cfg.fallbackMediaPaths}
+      }
+
+      handle @fallbackMediaPaths {
         ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
         @notStatic not file
         redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackMediaUrl}{path}

@@ -115,6 +115,12 @@ in {
       default = "";
     };
 
+    fallbackMediaPaths = lib.mkOption {
+      type = lib.types.str;
+      description = ''Sets the paths to be redirected to the fallbackMediaUrl.'';
+      default = "/media/* /thumbnail/*";
+    };
+
     additionalPackages = lib.mkOption {
       type = lib.types.listOf lib.types.package;
       description = "Additional packages to be installed";
