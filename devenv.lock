@@ -3,11 +3,11 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1688925746,
-        "narHash": "sha256-Lora6gsuAdVeVeGj2nD4joxTu+jZsAwySlxY1XZVq8o=",
+        "lastModified": 1688985196,
+        "narHash": "sha256-fKSISRtw4Bfth7iLmQ4sKBhW63IAkVJNYJ+TLknC+hc=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "b058455b37d2a1833eb71bebd3d2b2aa58ce70d7",
+        "rev": "6a30b674fb5a54eff8c422cc7840257227e0ead2",
         "type": "github"
       },
       "original": {
@@ -88,22 +88,6 @@
         "type": "github"
       }
     },
-    "kellerkinder": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1688117435,
-        "narHash": "sha256-7szY1x6Co/Vg56W/2Atd6D3DIn5yxHzn6oriUDPJCWE=",
-        "ref": "refs/heads/main",
-        "rev": "8c7185a4a33c0a807825c1f14bb7cc57b15c3111",
-        "revCount": 173,
-        "type": "git",
-        "url": "https://github.com/kellerkinderDE/devenv-shopware"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://github.com/kellerkinderDE/devenv-shopware"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1688918189,
@@ -145,11 +129,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1688926492,
-        "narHash": "sha256-vOZ2IH/G0qcqyKg8jd50zB5zWpvgkiYH1ZwoUMnCi38=",
+        "lastModified": 1688977481,
+        "narHash": "sha256-dy2+j59+o5T1/ZW+pQB917CcKvxGEwTNxdTchlFzJGQ=",
         "owner": "fossar",
         "repo": "nix-phps",
-        "rev": "ed5fea0442ba23522fa95072d902e7a8fa31899d",
+        "rev": "4ec97040d932805425e0d1e178ad759250e193a7",
         "type": "github"
       },
       "original": {
@@ -185,7 +169,6 @@
     "root": {
       "inputs": {
         "devenv": "devenv",
-        "kellerkinder": "kellerkinder",
         "nixpkgs": "nixpkgs",
         "phps": "phps",
         "pre-commit-hooks": "pre-commit-hooks"
