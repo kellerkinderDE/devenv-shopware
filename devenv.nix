@@ -2,6 +2,8 @@
 let
   cfg = config.kellerkinder;
 
+  currentVersion = "v1.0.0";
+
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
 in {
@@ -144,6 +146,27 @@ in {
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
+
+    dotenv.disableHint = true;
+
+    scripts.versionCheck.exec = ''
+      AVAILABLE=$(${pkgs.curl}/bin/curl --silent "https://api.github.com/repos/kellerkinderDE/devenv-shopware/releases/latest" | ${pkgs.jq}/bin/jq -r .tag_name)
+
+      echo ""
+
+      if [ "$AVAILABLE" = "${currentVersion}" ]; then
+        echo -e "\e[32mYou are running the latest version of devenv-shopware\e[0m"
+      else
+        echo -e "\e[31mThere is a new version of devenv-shopware available: $AVAILABLE\e[0m"
+        echo -e "Please see https://github.com/kellerkinderDE/devenv-shopware/wiki/Update for further information"
+      fi
+
+      echo ""
+    '';
+
+    enterShell = ''
+      versionCheck
+    '';
 
     # Environment variables
     env = lib.mkMerge [
