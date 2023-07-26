@@ -260,7 +260,7 @@ in {
 
     enableMysqlBinLog = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = ''Enables MySQL binary logs'';
     };
   };

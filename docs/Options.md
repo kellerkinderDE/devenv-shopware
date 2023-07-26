@@ -134,7 +134,7 @@ kellerkinder.additionalPackages = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
 ```
 
 # kellerkinder.enableMysqlBinLog
-Enables the MySQL Binary Log and adds configuration for it. Setting this setting to `false` will disable the MySQL Binary Log.
+Enables the MySQL Binary Log and adds configuration for it.
 
 *_Example_*
 ```
