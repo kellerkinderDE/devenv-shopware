@@ -255,7 +255,13 @@ in {
       type = lib.types.listOf lib.types.package;
       default = [ ];
       example = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
-      description = "Additional packages to be installed";
+      description = ''Additional packages to be installed'';
+    };
+
+    enableMysqlBinLog = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''Enables MySQL binary logs'';
     };
   };
 
@@ -371,14 +377,21 @@ in {
         ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
       }];
       settings = {
-        mysqld = {
-          group_concat_max_len = 2048;
-          key_buffer_size = 16777216;
-          max_allowed_packet = 134217728;
-          sync_binlog = 0;
-          table_open_cache = 1024;
-          log_bin_trust_function_creators = 1;
-        };
+        mysqld = lib.mkMerge [
+          (lib.mkIf cfg.enable {
+            group_concat_max_len = 2048;
+            key_buffer_size = 16777216;
+            max_allowed_packet = 134217728;
+            table_open_cache = 1024;
+          })
+          (lib.mkIf (cfg.enableMysqlBinLog) {
+            sync_binlog = 0;
+            log_bin_trust_function_creators = 1;
+          })
+          (lib.mkIf (!cfg.enableMysqlBinLog) {
+            skip_log_bin = 1;
+          })
+        ];
         mysql = {
           user = "shopware";
           password = "shopware";
