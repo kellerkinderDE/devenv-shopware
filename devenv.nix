@@ -127,6 +127,12 @@ in {
       default = [ ];
       example = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
     };
+
+    enableMysqlBinLog = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''Enables MySQL binary logs'';
+    };
   };
 
   config = lib.mkIf cfg.enable {
