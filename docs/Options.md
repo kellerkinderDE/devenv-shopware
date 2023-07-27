@@ -132,3 +132,11 @@ Define packages that should be installed additionally.
 ```
 kellerkinder.additionalPackages = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
 ```
+
+# kellerkinder.enableMysqlBinLog
+Enables the MySQL Binary Log and adds configuration for it.
+
+*_Example_*
+```
+kellerkinder.enableMysqlBinLog = false;
+```
