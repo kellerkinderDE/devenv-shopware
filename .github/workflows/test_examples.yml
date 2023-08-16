@@ -1,0 +1,51 @@
+name: Test examples
+
+on:
+  pull_request:
+    paths:
+      - modules/**
+      - devenv.nix
+      - devenv.yaml
+  push:
+    paths:
+      - modules/**
+      - devenv.nix
+      - devenv.yaml
+
+env:
+  DEVENV_TESTING_VERSION: v0.6.3
+
+jobs:
+  test_examples:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
+        with:
+          name: devenv
+      - name: Install devenv.sh
+        run: |
+          useradd nix-user && groupadd -g 30000 nixbld && usermod -a -G nixbld nix-user
+          echo "build-users-group = nixbld" >> /etc/nix/nix.conf
+          nix profile install --accept-flake-config tarball+https://install.devenv.sh/${DEVENV_TESTING_VERSION}
+        shell: sh
+      - name: Test SW6 example
+        run: |
+          echo running on branch ${GITHUB_REF##*/}
+          cd examples/sw6
+          echo
+          sed -i "s/ref=v1.0.0/ref=${GITHUB_REF##*/}/g" devenv.yaml
+          cat devenv.yaml
+          devenv ci -vvv
+          devenv shell echo ok
+      - name: Test SW5 example
+        run: |
+          echo running on branch ${GITHUB_REF##*/}
+          cd examples/sw5
+          sed -i "s/ref=v1.0.0/ref=${GITHUB_REF##*/}/g" devenv.yaml
+          devenv ci -vvv
+          devenv shell echo ok
