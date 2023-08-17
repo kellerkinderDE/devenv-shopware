@@ -1,26 +1,19 @@
 name: Test examples
 
 on:
-  pull_request:
-    paths:
-      - modules/**
-      - devenv.nix
-      - devenv.yaml
   push:
     paths:
+      - .github/workflows/test_examples.yml
       - modules/**
       - devenv.nix
       - devenv.yaml
 
 env:
-  DEVENV_TESTING_VERSION: v0.6.3
+  DEVENV_VERSION: v0.6.3
 
 jobs:
   test_examples:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
@@ -28,24 +21,19 @@ jobs:
         with:
           name: devenv
       - name: Install devenv.sh
-        run: |
-          useradd nix-user && groupadd -g 30000 nixbld && usermod -a -G nixbld nix-user
-          echo "build-users-group = nixbld" >> /etc/nix/nix.conf
-          nix profile install --accept-flake-config tarball+https://install.devenv.sh/${DEVENV_TESTING_VERSION}
+        run: nix profile install --accept-flake-config tarball+https://install.devenv.sh/${DEVENV_VERSION}
         shell: sh
       - name: Test SW6 example
         run: |
-          echo running on branch ${GITHUB_REF##*/}
+          echo running on branch ${GITHUB_REF_NAME}
           cd examples/sw6
-          echo
-          sed -i "s/ref=v1.0.0/ref=${GITHUB_REF##*/}/g" devenv.yaml
-          cat devenv.yaml
+          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
           devenv ci -vvv
           devenv shell echo ok
       - name: Test SW5 example
         run: |
-          echo running on branch ${GITHUB_REF##*/}
+          echo running on branch ${GITHUB_REF_NAME}
           cd examples/sw5
-          sed -i "s/ref=v1.0.0/ref=${GITHUB_REF##*/}/g" devenv.yaml
+          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
           devenv ci -vvv
           devenv shell echo ok
