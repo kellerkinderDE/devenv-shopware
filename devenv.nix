@@ -210,6 +210,12 @@ in {
       description = "Enables Elasticsearch";
     };
 
+    enableOpenSearch = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enables OpenSearch";
+    };
+
     enableRabbitMq = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -418,6 +424,7 @@ in {
     services.mailhog.enable = true;
 
     services.elasticsearch.enable = cfg.enableElasticsearch;
+    services.opensearch.enable = cfg.enableOpenSearch;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
@@ -441,7 +448,7 @@ in {
 
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
       })
-      (lib.mkIf config.services.elasticsearch.enable {
+      (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
