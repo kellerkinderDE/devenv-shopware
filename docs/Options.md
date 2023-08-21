@@ -65,12 +65,21 @@ kellerkinder.enableRabbitMq = true;
 ```
 
 # kellerkinder.enableElasticsearch
-Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
-MySQL search.
+Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
 
 *_Example_*
 ```
 kellerkinder.enableElasticsearch = true;
+```
+
+# kellerkinder.enableOpenSearch
+Enables the OpenSearch service and configures Shopware to use OpenSearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
+
+*_Example_*
+```
+kellerkinder.enableOpenSearch = true;
 ```
 
 # kellerkinder.importDatabaseDumps
