@@ -4,11 +4,11 @@ on:
   pull_request:
     branches:
       - main
-      - integration/**
-      - v**
+      - release/**
   push:
     paths:
       - .github/workflows/test_examples.yml
+      - examples/**
       - modules/**
       - devenv.nix
       - devenv.yaml
@@ -22,7 +22,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "::set-output name=matrix::$(ls examples/ | jq -R -s -c 'split("\n")[:-1]')"
   test_examples:
