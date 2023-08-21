@@ -1,6 +1,11 @@
 name: Test examples
 
 on:
+  pull_request:
+    branches:
+      - main
+      - integration/**
+      - v**
   push:
     paths:
       - .github/workflows/test_examples.yml
