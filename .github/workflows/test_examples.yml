@@ -17,8 +17,20 @@ env:
   DEVENV_VERSION: v0.6.3
 
 jobs:
-  test_examples:
+  list-examples:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls examples/ | jq -R -s -c 'split("\n")[:-1]')"
+  test_examples:
+    needs: list-examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        manifest: ${{ fromJson(needs.list-examples.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
@@ -28,17 +40,10 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install --accept-flake-config tarball+https://install.devenv.sh/${DEVENV_VERSION}
         shell: sh
-      - name: Test SW6 example
+      - name: Test ${{ matrix.manifest }} example
         run: |
           echo running on branch ${GITHUB_REF_NAME}
-          cd examples/sw6
-          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
-          devenv ci -vvv
-          devenv shell echo ok
-      - name: Test SW5 example
-        run: |
-          echo running on branch ${GITHUB_REF_NAME}
-          cd examples/sw5
+          cd examples/${{ matrix.manifest }}
           sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
           devenv ci -vvv
           devenv shell echo ok
