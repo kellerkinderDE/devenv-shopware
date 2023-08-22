@@ -70,8 +70,8 @@ in {
 
     enableOpenSearch = lib.mkOption {
       type = lib.types.bool;
-      default = true;
       description = "Enables OpenSearch";
+      default = false;
     };
 
     enableRabbitMq = lib.mkOption {
