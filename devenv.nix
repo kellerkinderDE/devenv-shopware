@@ -274,7 +274,7 @@ in {
 
     languages.javascript = {
       enable = lib.mkDefault true;
-      package = lib.mkDefault pkgs.nodejs-16_x;
+      package = lib.mkDefault pkgs.nodejs-18_x;
     };
 
     languages.php = {
