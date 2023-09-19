@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - release/**
+      - integration/**
   push:
     paths:
       - .github/workflows/test_examples.yml
@@ -44,6 +45,6 @@ jobs:
         run: |
           echo running on branch ${GITHUB_REF_NAME}
           cd examples/${{ matrix.manifest }}
-          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
+          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,${GITHUB_REPOSITORY}?ref=${GITHUB_REF_NAME}," devenv.yaml
           devenv ci -vvv
           devenv shell echo ok
