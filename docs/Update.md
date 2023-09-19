@@ -10,3 +10,4 @@
       flake: false
     ...
   ```
+* If your shopware version is below `6.5.*` you might want to add `languages.javascript.package = pkgs.nodejs-16_x;` to your `devenv.nix` due to compatibility.

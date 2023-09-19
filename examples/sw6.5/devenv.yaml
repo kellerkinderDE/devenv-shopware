@@ -1,0 +1,14 @@
+allowUnfree: true
+imports:
+  - kellerkinder
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixos-unstable
+  kellerkinder:
+    url: git+https://github.com/kellerkinderDE/devenv-shopware?ref=v1.0.0
+    flake: false
+  phps:
+    url: github:fossar/nix-phps
+    inputs:
+      nixpkgs:
+        follows: nixpkgs

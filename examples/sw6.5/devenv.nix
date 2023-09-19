@@ -1,9 +1,6 @@
 { pkgs, config, inputs, lib, ... }:
 
 {
-  # We need a lower version due to compatibility
-  languages.javascript.package = pkgs.nodejs-16_x;
-
   kellerkinder.phpVersion = "php81";
   kellerkinder.additionalPhpConfig = ''
     memory_limit = 512M
