@@ -4,8 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - release/**
-      - integration/**
+      - integration
   push:
     paths:
       - .github/workflows/test_examples.yml
