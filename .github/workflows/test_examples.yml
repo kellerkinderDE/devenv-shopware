@@ -50,3 +50,4 @@ jobs:
           direnv allow && direnv reload
           devenv ci -vvv
           devenv shell echo ok
+        shell: bash
