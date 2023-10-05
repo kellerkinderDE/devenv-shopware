@@ -65,12 +65,21 @@ kellerkinder.enableRabbitMq = true;
 ```
 
 # kellerkinder.enableElasticsearch
-Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
-MySQL search.
+Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
 
 *_Example_*
 ```
 kellerkinder.enableElasticsearch = true;
+```
+
+# kellerkinder.enableOpenSearch
+Enables the OpenSearch service and configures Shopware to use OpenSearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
+
+*_Example_*
+```
+kellerkinder.enableOpenSearch = true;
 ```
 
 # kellerkinder.importDatabaseDumps
@@ -107,6 +116,14 @@ Changes the default root of the project to the specified value (no `/` as pre- o
 kellerkinder.projectRoot = "project";
 ```
 
+# kellerkinder.indexFile
+Sets the caddy index file for the document root
+
+*_Example_*
+```
+kellerkinder.indexFile = "shopware.php";
+```
+
 # kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
@@ -117,12 +134,20 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-# kellerkinder.fallbackRedirectMediaUrl
+# kellerkinder.fallbackMediaUrl
 Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*
 ```
-kellerkinder.fallbackRedirectMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
+```
+
+# kellerkinder.fallbackMediaPaths
+Sets the paths to be redirected to the fallbackMediaUrl.
+
+*_Example_*
+```
+kellerkinder.fallbackMediaPaths = "/media/* /thumbnail/*";
 ```
 
 # kellerkinder.additionalPackages

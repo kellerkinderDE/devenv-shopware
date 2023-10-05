@@ -1,0 +1,49 @@
+name: Test examples
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/**
+  push:
+    paths:
+      - .github/workflows/test_examples.yml
+      - examples/**
+      - modules/**
+      - devenv.nix
+      - devenv.yaml
+
+env:
+  DEVENV_VERSION: v0.6.3
+
+jobs:
+  list-examples:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-matrix
+        run: echo "matrix=$(ls examples/ | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+  test_examples:
+    needs: list-examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        manifest: ${{ fromJson(needs.list-examples.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
+        with:
+          name: devenv
+      - name: Install devenv.sh
+        run: nix profile install --accept-flake-config tarball+https://install.devenv.sh/${DEVENV_VERSION}
+        shell: sh
+      - name: Test ${{ matrix.manifest }} example
+        run: |
+          echo running on branch ${GITHUB_REF_NAME}
+          cd examples/${{ matrix.manifest }}
+          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.0,kellerkinderDE/devenv-shopware?ref=${GITHUB_REF_NAME}," devenv.yaml
+          devenv ci -vvv
+          devenv shell echo ok

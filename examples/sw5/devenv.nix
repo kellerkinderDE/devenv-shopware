@@ -9,5 +9,6 @@
   kellerkinder.enableRabbitMq = false;
   kellerkinder.enableElasticsearch = false;
   kellerkinder.documentRoot = ".";
+  kellerkinder.indexFile = "shopware.php";
   kellerkinder.staticFilePaths = "/files/* /media/*";
 }
