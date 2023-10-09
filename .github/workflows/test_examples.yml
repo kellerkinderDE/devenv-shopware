@@ -45,7 +45,7 @@ jobs:
       - name: Test ${{ matrix.manifest }} example
         run: |
           cd ${GITHUB_WORKSPACE}/examples/${{ matrix.manifest }}
-          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.1,${GITHUB_REPOSITORY}?ref=${GITHUB_REF_NAME}," devenv.yaml
+          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.2,${GITHUB_REPOSITORY}?ref=${GITHUB_REF_NAME}," devenv.yaml
           echo running on ${GITHUB_REPOSITORY} with ref ${GITHUB_REF_NAME}
           direnv allow && direnv reload
           devenv ci -vvv
