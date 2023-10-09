@@ -1,12 +1,13 @@
 # Updates
 
 ## v1.0.0
+* You have to update to devenv version `0.6.3` or higher
 * You have to remove `http`, `https` and the ports (e.g. `8000`) from `kellerkinder.additionalServerAlias`
 * You have to adjust your `devenv.yaml` to
   ```yml
     ...
     kellerkinder:
-      url: git+https://github.com/kellerkinderDE/devenv-shopware?ref=v1.0.0
+      url: github:kellerkinderDE/devenv-shopware?ref=v1.0.0
       flake: false
     ...
   ```
