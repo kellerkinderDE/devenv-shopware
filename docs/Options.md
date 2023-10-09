@@ -7,7 +7,7 @@ kellerkinder.phpVersion = "php80";
 ```
 
 # kellerkinder.systemConfig
-Define shopware systemconfig values.
+Define shopware system config values.
 
 *_Example_*
 ```
