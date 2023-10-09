@@ -1,6 +1,6 @@
 # Kellerkinder devenv
 [![GitHub Release](https://img.shields.io/github/v/release/kellerkinderDE/devenv-shopware.svg?style=flat)](https://github.com/kellerkinderDE/devenv-shopware/releases)
-[![Example tests](https://github.com/kellerkinderDE/devenv-shopware/actions/workflows/test_examples.yml/badge.svg)](https://github.com/kellerkinderDE/devenv-shopware/actions/workflows/test_examples.yml)
+[![Tests](https://github.com/kellerkinderDE/devenv-shopware/actions/workflows/test_examples.yml/badge.svg)](https://github.com/kellerkinderDE/devenv-shopware/actions/workflows/test_examples.yml)
 
 devenv provides a reproducible and declarative local development environment for our [Shopware](https://www.shopware.com) projects.
 It uses the [Nix package system](https://nixos.org/) to provide native packages for all our required services. This environment is
@@ -16,6 +16,9 @@ tightly tailored to the needs of our team members working on various projects wi
 
 ## Setup & Usage
 A description about the setup and usage can be found in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki).
+
+### Update
+To update your devenv config to the latest version, simply follow the update instructions for the new version in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki/Update)
 
 ## More Information:
 - https://devenv.sh/
