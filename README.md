@@ -14,6 +14,9 @@ tightly tailored to the needs of our team members working on various projects wi
 - Inherits all default devenv features and services
 - Pre-installed [shopware-cli](https://sw-cli.fos.gg/)
 
+## Requirements
+* devenv: `v0.6.3` or higher
+
 ## Setup & Usage
 A description about the setup and usage can be found in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki).
 
