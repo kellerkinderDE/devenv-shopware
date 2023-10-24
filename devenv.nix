@@ -2,11 +2,12 @@
 let
   cfg = config.kellerkinder;
 
+  currentVersion = "v1.0.2";
+
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
 in {
   imports = [
-    (lib.mkRenamedOptionModule [ "kellerkinder" "additionalServerAlias" ] [ "kellerkinder" "domains" ])
     (lib.mkRenamedOptionModule [ "kellerkinder" "fallbackRedirectMediaUrl" ] [ "kellerkinder" "fallbackMediaUrl" ])
   ] ++ (listEntries ./modules);
 
@@ -54,9 +55,9 @@ in {
       default = "";
     };
 
-    domains = lib.mkOption {
+    additionalServerAlias = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      description = "Domains to be used for the vhost";
+      description = "Additional server alias";
       default = [ ];
       example = [ "example.com" ];
     };
@@ -64,6 +65,12 @@ in {
     enableElasticsearch = lib.mkOption {
       type = lib.types.bool;
       description = "Enables Elasticsearch";
+      default = false;
+    };
+
+    enableOpenSearch = lib.mkOption {
+      type = lib.types.bool;
+      description = "Enables OpenSearch";
       default = false;
     };
 
@@ -89,6 +96,19 @@ in {
       default = "public";
     };
 
+    indexFile = lib.mkOption {
+      type = lib.types.str;
+      description = "Sets the caddy index file for the document root";
+      default = "index.php";
+    };
+
+    projectRoot = lib.mkOption {
+      type = lib.types.str;
+      description = "Root of the project as path from the file devenv.nix";
+      default = ".";
+      example = "project";
+    };
+
     staticFilePaths = lib.mkOption {
       type = lib.types.str;
       description = ''Sets the matcher paths to be "ignored" by caddy'';
@@ -97,8 +117,14 @@ in {
 
     fallbackMediaUrl = lib.mkOption {
       type = lib.types.str;
-      description = "Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.";
+      description = ''Fallback URL for media not found on local storage. Best for CDN purposes without downloading them.'';
       default = "";
+    };
+
+    fallbackMediaPaths = lib.mkOption {
+      type = lib.types.str;
+      description = ''Sets the paths to be redirected to the fallbackMediaUrl.'';
+      default = "/media/* /thumbnail/*";
     };
 
     additionalPackages = lib.mkOption {
@@ -107,30 +133,59 @@ in {
       default = [ ];
       example = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
     };
+
+    enableMysqlBinLog = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''Enables MySQL binary logs'';
+    };
   };
 
   config = lib.mkIf cfg.enable {
     packages = [
       pkgs.jq
       pkgs.gnupatch
+      pkgs.shopware-cli
     ] ++ cfg.additionalPackages;
 
     languages.javascript = {
       enable = lib.mkDefault true;
-      package = lib.mkDefault pkgs.nodejs-16_x;
+      package = lib.mkDefault pkgs.nodejs-18_x;
     };
+
+    services.redis.enable = lib.mkDefault true;
 
     services.adminer.enable = lib.mkDefault true;
     services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
 
-    services.elasticsearch.enable = cfg.enableElasticsearch;
-
     services.mailhog.enable = true;
+
+    services.elasticsearch.enable = cfg.enableElasticsearch;
+    services.opensearch.enable = cfg.enableOpenSearch;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
 
-    services.redis.enable = lib.mkDefault true;
+    dotenv.disableHint = true;
+
+    scripts.versionCheck.exec = ''
+      AVAILABLE=$(${pkgs.curl}/bin/curl --silent "https://api.github.com/repos/kellerkinderDE/devenv-shopware/releases/latest" | ${pkgs.jq}/bin/jq -r .tag_name)
+
+      echo ""
+
+      if [ "$AVAILABLE" = "${currentVersion}" ]; then
+        echo -e "\e[32mYou are running the latest version of devenv-shopware\e[0m"
+      else
+        echo -e "\e[31mThere is a new version of devenv-shopware available: $AVAILABLE\e[0m"
+        echo -e "Please see https://github.com/kellerkinderDE/devenv-shopware/wiki/Update for further information"
+      fi
+
+      echo ""
+    '';
+
+    enterShell = ''
+      versionCheck
+    '';
 
     # Environment variables
     env = lib.mkMerge [
@@ -139,8 +194,8 @@ in {
         MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
         MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-        APP_URL = lib.mkDefault "https://127.0.0.1:8000";
-        CYPRESS_baseUrl = lib.mkDefault "https://127.0.0.1:8000";
+        APP_URL = lib.mkDefault "http://127.0.0.1:8000";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:8000";
 
         APP_SECRET = lib.mkDefault "devsecret";
 
@@ -151,7 +206,7 @@ in {
 
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
       })
-      (lib.mkIf config.services.elasticsearch.enable {
+      (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
@@ -159,7 +214,6 @@ in {
       })
       (lib.mkIf config.services.rabbitmq.enable {
         RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
-        MESSENGER_TRANSPORT_DSN = "amqp://guest:guest@localhost:5672/%2f";
       })
       (lib.mkIf config.services.redis.enable {
         REDIS_DSN = "redis://127.0.0.1:6379";

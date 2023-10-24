@@ -18,11 +18,15 @@ let
         expression header_regexp('xdebug', 'Cookie', 'XDEBUG_SESSION') || query({'XDEBUG_SESSION': '*'})
       }
 
-      root * ${cfg.documentRoot}
+      root * ${cfg.projectRoot}/${cfg.documentRoot}
 
       encode zstd gzip
 
-      handle /media/* {
+      @fallbackMediaPaths {
+        path ${cfg.fallbackMediaPaths}
+      }
+
+      handle @fallbackMediaPaths {
         ${lib.strings.optionalString (cfg.fallbackMediaUrl != "") ''
         @notStatic not file
         redir @notStatic ${lib.strings.removeSuffix "/" cfg.fallbackMediaUrl}{path}
@@ -36,13 +40,13 @@ let
 
       handle {
         php_fastcgi @default unix/${config.languages.php.fpm.pools.web.socket} {
+          index ${cfg.indexFile}
           trusted_proxies private_ranges
-          index shopware.php index.php
         }
 
         php_fastcgi @debugger unix/${config.languages.php.fpm.pools.xdebug.socket} {
+          index ${cfg.indexFile}
           trusted_proxies private_ranges
-          index shopware.php index.php
         }
 
         file_server
@@ -73,7 +77,7 @@ let
       extraConfig = vhostConfig;
     };
     "${toString domain}:443" = lib.mkDefault {
-      extraConfig = vhostConfig;
+      extraConfig = vhostConfigSSL;
     };
   })));
 in {

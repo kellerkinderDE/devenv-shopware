@@ -6,6 +6,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.mysql = {
       enable = lib.mkDefault true;
+      package = lib.mkDefault pkgs.mysql80;
       initialDatabases = lib.mkDefault [{ name = "shopware"; }];
       ensureUsers = lib.mkDefault [{
         name = "shopware";
@@ -13,14 +14,21 @@ in {
         ensurePermissions = { "*.*" = "ALL PRIVILEGES"; };
       }];
       settings = {
-        mysqld = {
-          group_concat_max_len = 2048;
-          key_buffer_size = 16777216;
-          max_allowed_packet = 134217728;
-          sync_binlog = 0;
-          table_open_cache = 1024;
-          log_bin_trust_function_creators = 1;
-        };
+        mysqld = lib.mkMerge [
+          (lib.mkIf cfg.enable {
+            group_concat_max_len = 2048;
+            key_buffer_size = 16777216;
+            max_allowed_packet = 134217728;
+            table_open_cache = 1024;
+          })
+          (lib.mkIf (cfg.enableMysqlBinLog) {
+            sync_binlog = 0;
+            log_bin_trust_function_creators = 1;
+          })
+          (lib.mkIf (!cfg.enableMysqlBinLog) {
+            skip_log_bin = 1;
+          })
+        ];
         mysql = {
           user = "shopware";
           password = "shopware";

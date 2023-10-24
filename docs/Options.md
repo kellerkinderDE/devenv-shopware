@@ -7,7 +7,7 @@ kellerkinder.phpVersion = "php80";
 ```
 
 # kellerkinder.systemConfig
-Define shopware systemconfig values.
+Define shopware system config values.
 
 *_Example_*
 ```
@@ -41,7 +41,7 @@ Define additional server aliases that are added to caddy.
 
 *_Example_*
 ```
-kellerkinder.domains = [
+kellerkinder.additionalServerAlias = [
    "example.com"
 ];
 ```
@@ -65,12 +65,21 @@ kellerkinder.enableRabbitMq = true;
 ```
 
 # kellerkinder.enableElasticsearch
-Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default
-MySQL search.
+Enables the Elasticsearch service and configures Shopware to use Elasticsearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
 
 *_Example_*
 ```
 kellerkinder.enableElasticsearch = true;
+```
+
+# kellerkinder.enableOpenSearch
+Enables the OpenSearch service and configures Shopware to use OpenSearch in addition to the default MySQL search.
+Only one of kellerkinder.enableElasticsearch or kellerkinder.enableOpenSearch should be enabled.
+
+*_Example_*
+```
+kellerkinder.enableOpenSearch = true;
 ```
 
 # kellerkinder.importDatabaseDumps
@@ -99,6 +108,22 @@ Changes the default document root (`public`) of caddy to the specified value
 kellerkinder.documentRoot = ".";
 ```
 
+# kellerkinder.projectRoot
+Changes the default root of the project to the specified value (no `/` as pre- or suffix required)
+
+*_Example for a `project` folder inside the current folder_*
+```
+kellerkinder.projectRoot = "project";
+```
+
+# kellerkinder.indexFile
+Sets the caddy index file for the document root
+
+*_Example_*
+```
+kellerkinder.indexFile = "shopware.php";
+```
+
 # kellerkinder.staticFilePaths
 Adjusts the defined matcher paths for caddy. You might want to adjust those to access/handle `*.php` files.
 
@@ -109,7 +134,7 @@ Adjusts the defined matcher paths for caddy. You might want to adjust those to a
 kellerkinder.staticFilePaths = "myCustomFolder/*";
 ```
 
-# kellerkinder.fallbackRedirectMediaUrl
+# kellerkinder.fallbackMediaUrl
 Fallback redirect URL for media not found on local storage. Best for CDN purposes without downloading them.
 
 *_Example_*
@@ -117,10 +142,26 @@ Fallback redirect URL for media not found on local storage. Best for CDN purpose
 kellerkinder.fallbackMediaUrl = "https://my-cool-cdn-in-public-staging.example-cdn.com";
 ```
 
+# kellerkinder.fallbackMediaPaths
+Sets the paths to be redirected to the fallbackMediaUrl.
+
+*_Example_*
+```
+kellerkinder.fallbackMediaPaths = "/media/* /thumbnail/*";
+```
+
 # kellerkinder.additionalPackages
-Define additional PHP extensions that are included in the devenv environment.
+Define packages that should be installed additionally.
 
 *_Example_*
 ```
 kellerkinder.additionalPackages = [ pkgs.jpegoptim pkgs.optipng pkgs.gifsicle ];
+```
+
+# kellerkinder.enableMysqlBinLog
+Enables the MySQL Binary Log and adds configuration for it.
+
+*_Example_*
+```
+kellerkinder.enableMysqlBinLog = false;
 ```
