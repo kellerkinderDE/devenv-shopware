@@ -73,10 +73,10 @@ let
  })));
 
   caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
-    "${toString domain}:80" = lib.mkDefault {
+    "${toString domain}:${cfg.httpPort}" = lib.mkDefault {
       extraConfig = vhostConfig;
     };
-    "${toString domain}:443" = lib.mkDefault {
+    "${toString domain}:${cfg.httpsPort}" = lib.mkDefault {
       extraConfig = vhostConfigSSL;
     };
   })));

@@ -139,6 +139,18 @@ in {
       default = false;
       description = ''Enables MySQL binary logs'';
     };
+
+    httpPort = lib.mkOption {
+      type = lib.types.bool;
+      default = 80;
+      description = ''Sets the HTTP port'';
+    };
+
+    httpsPort = lib.mkOption {
+      type = lib.types.bool;
+      default = 443;
+      description = ''Sets the HTTPS port'';
+    };
   };
 
   config = lib.mkIf cfg.enable {
