@@ -63,14 +63,10 @@ let
 
   vhostConfigSSL = lib.strings.concatStrings [
     ''
-      tls ${config.env.DEVENV_STATE}/mkcert/%DOMAIN%.pem ${config.env.DEVENV_STATE}/mkcert/%DOMAIN%-key.pem
+      tls internal
     ''
     vhostConfig
   ];
-
-  myHosts = (lib.mkMerge (lib.forEach cfg.domains (domain: {
-   "${toString domain}" = "127.0.0.1";
- })));
 
   caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
     "${toString domain}:${cfg.httpPort}" = lib.mkDefault {
@@ -82,12 +78,9 @@ let
   })));
 in {
   config = lib.mkIf cfg.enable {
-    hosts = myHosts;
-    certificates = vhostDomains;
-
     services.caddy = {
      enable = lib.mkDefault true;
-     virtualHosts= caddyHostConfig;
+     virtualHosts = caddyHostConfig;
     };
   };
 }
