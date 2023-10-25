@@ -206,8 +206,8 @@ in {
         MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
         MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-        APP_URL = lib.mkDefault "http://127.0.0.1:8000";
-        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:8000";
+        APP_URL = lib.mkDefault "http://127.0.0.1";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1";
 
         APP_SECRET = lib.mkDefault "devsecret";
 

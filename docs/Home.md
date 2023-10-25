@@ -29,7 +29,7 @@ and needs to be adjusted when using a lower version.
 - php82
 
 # PHP debugging
-As mentioned in the features section, devenv is shipped with Xdebug. You need to activate it to actually debug something. For the Frontend, you can use the [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively, you can simply add a query parameter to the URL you want to debug. Like this: `https://127.0.0.1:8000/?XDEBUG_SESSION=1`
+As mentioned in the features section, devenv is shipped with Xdebug. You need to activate it to actually debug something. For the Frontend, you can use the [Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc?gl=US&hl=en) extension when using Chrome. Alternatively, you can simply add a query parameter to the URL you want to debug. Like this: `https://127.0.0.1/?XDEBUG_SESSION=1`
 This also works great when having to debug API requests, e.g. in Insomnia.
 
 For the CLI, you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
