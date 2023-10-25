@@ -3,10 +3,6 @@
 let
   cfg = config.kellerkinder;
 
-  mappedHosts = lib.mapAttrsToList (name: value: { inherit name; }) cfg.domains;
-
-  vhostDomains = cfg.domains ++ [ "127.0.0.1" ];
-  # TODO: fix error according php_fastcgi
   vhostConfig = lib.strings.concatStrings [
     ''
       @default {
@@ -67,6 +63,8 @@ let
     ''
     vhostConfig
   ];
+
+  vhostDomains = cfg.domains ++ [ "127.0.0.1" ];
 
   caddyHostConfig = (lib.mkMerge (lib.forEach vhostDomains (domain: {
     "${toString domain}:${cfg.httpPort}" = lib.mkDefault {
