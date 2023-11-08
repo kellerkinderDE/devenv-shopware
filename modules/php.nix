@@ -5,7 +5,7 @@ let
 
   phpConfig = lib.strings.concatStrings [
     ''
-      memory_limit = 2G
+      memory_limit = -1
       pdo_mysql.default_socket = ''${MYSQL_UNIX_PORT}
       mysqli.default_socket = ''${MYSQL_UNIX_PORT}
       blackfire.agent_socket = "${config.services.blackfire.socket}";
@@ -59,29 +59,37 @@ in {
       enable = lib.mkDefault true;
       package = lib.mkDefault phpPackage;
 
-      fpm.pools.web = {
-        settings = {
-          "clear_env" = "no";
-          "pm" = "dynamic";
-          "pm.max_children" = 10;
-          "pm.start_servers" = 2;
-          "pm.min_spare_servers" = 1;
-          "pm.max_spare_servers" = 10;
-        };
-      };
-      fpm.pools.web.phpPackage = lib.mkDefault phpPackage;
+      fpm = {
+        phpOptions = ''
+          memory_limit = "2G"
+        '';
 
-      fpm.pools.xdebug = {
-        settings = {
-          "clear_env" = "no";
-          "pm" = "dynamic";
-          "pm.max_children" = 10;
-          "pm.start_servers" = 2;
-          "pm.min_spare_servers" = 1;
-          "pm.max_spare_servers" = 10;
+        pools = {
+          web = {
+            phpPackage = lib.mkDefault phpPackage;
+            settings = {
+              "clear_env" = "no";
+              "pm" = "dynamic";
+              "pm.max_children" = 10;
+              "pm.start_servers" = 2;
+              "pm.min_spare_servers" = 1;
+              "pm.max_spare_servers" = 10;
+            };
+          };
+
+          xdebug = {
+            phpPackage = lib.mkDefault phpXdebug;
+            settings = {
+              "clear_env" = "no";
+              "pm" = "dynamic";
+              "pm.max_children" = 10;
+              "pm.start_servers" = 2;
+              "pm.min_spare_servers" = 1;
+              "pm.max_spare_servers" = 10;
+            };
+          };
         };
       };
-      fpm.pools.xdebug.phpPackage = lib.mkDefault phpXdebug;
     };
 
     scripts.debug.exec = ''
