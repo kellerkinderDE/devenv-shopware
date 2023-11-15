@@ -207,6 +207,7 @@ in {
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
       })
       (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
+        ES_MULTILINGUAL_INDEX = "1";
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1";
