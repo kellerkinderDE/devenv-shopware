@@ -188,38 +188,36 @@ in {
     '';
 
     # Environment variables
-    env = lib.mkIf !dotenv.enable {
-      lib.mkMerge [
-        (lib.mkIf cfg.enable {
-          DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
-          MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-          MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-  
-          APP_URL = lib.mkDefault "http://127.0.0.1:8000";
-          CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:8000";
-  
-          APP_SECRET = lib.mkDefault "devsecret";
-  
-          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
-          DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
-  
-          SHOPWARE_CACHE_ID = "dev";
-  
-          NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
-        })
-        (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
-          SHOPWARE_ES_ENABLED = "1";
-          SHOPWARE_ES_INDEXING_ENABLED = "1";
-          SHOPWARE_ES_HOSTS = "127.0.0.1";
-          SHOPWARE_ES_THROW_EXCEPTION = "1";
-        })
-        (lib.mkIf config.services.rabbitmq.enable {
-          RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
-        })
-        (lib.mkIf config.services.redis.enable {
-          REDIS_DSN = "redis://127.0.0.1:6379";
-        })
-      ];
-    };
+    env = lib.mkMerge [
+      (lib.mkIf (cfg.enable && !config.dotenv.enable) {
+        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
+        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+
+        APP_URL = lib.mkDefault "http://127.0.0.1:8000";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:8000";
+
+        APP_SECRET = lib.mkDefault "devsecret";
+
+        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
+        DISABLE_ADMIN_COMPILATION_TYPECHECK = true;
+
+        SHOPWARE_CACHE_ID = "dev";
+
+        NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
+      })
+      (lib.mkIf ((config.services.elasticsearch.enable || config.services.opensearch.enable) && !config.dotenv.enable) {
+        SHOPWARE_ES_ENABLED = "1";
+        SHOPWARE_ES_INDEXING_ENABLED = "1";
+        SHOPWARE_ES_HOSTS = "127.0.0.1";
+        SHOPWARE_ES_THROW_EXCEPTION = "1";
+      })
+      (lib.mkIf (config.services.rabbitmq.enable && !config.dotenv.enable) {
+        RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
+      })
+      (lib.mkIf (config.services.redis.enable && !config.dotenv.enable) {
+        REDIS_DSN = "redis://127.0.0.1:6379";
+      })
+    ];
   };
 }
