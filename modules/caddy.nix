@@ -46,6 +46,8 @@ let
         }
 
         file_server
+
+        encode zstd gzip
       }
 
       log {
@@ -64,7 +66,7 @@ let
     vhostConfig
   ];
 
-  vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" ];
+  vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" "localhost" ];
 
   caddyHostConfig = (lib.mkMerge
     (lib.forEach vhostDomains (domain: {
