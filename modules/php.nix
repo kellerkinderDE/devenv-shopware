@@ -15,6 +15,8 @@ let
       display_startup_errors = true
       error_reporting = E_ALL
       html_errors = true
+      max_execution_time = 60
+      max_input_time = 60
       assert.active = 0
       zend.detect_unicode = 0
       opcache.memory_consumption = 256M
@@ -38,6 +40,7 @@ let
 
   phpPackage = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
+      ++ [ grpc ]
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
@@ -47,7 +50,7 @@ let
 
   phpXdebug = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
-      ++ [ xdebug ]
+      ++ [ xdebug grpc ]
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
       ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
