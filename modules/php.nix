@@ -40,7 +40,6 @@ let
 
   phpPackage = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
-      ++ [ grpc ]
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.blackfire.enable blackfire)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
@@ -50,7 +49,7 @@ let
 
   phpXdebug = package.buildEnv {
     extensions = { all, enabled }: with all; enabled
-      ++ [ xdebug grpc ]
+      ++ [ xdebug ]
       ++ (lib.optional config.services.redis.enable redis)
       ++ (lib.optional config.services.rabbitmq.enable amqp)
       ++ lib.attrsets.attrValues (lib.attrsets.getAttrs cfg.additionalPhpExtensions package.extensions);
