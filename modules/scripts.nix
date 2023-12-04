@@ -142,7 +142,7 @@ in {
   '';
 
   # Processes
-  processes.entryscript.exec "${entryScript}";
+  processes.entryscript.exec = "${entryScript}";
 
   scripts.caddy-trust.exec = ''
     ${config.services.caddy.package}/bin/caddy trust
