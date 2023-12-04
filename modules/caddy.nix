@@ -64,7 +64,7 @@ let
     vhostConfig
   ];
 
-  vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" "localhost" ];
+  vhostDomains = cfg.additionalServerAlias ++ [ "127.0.0.1" ];
 
   caddyHostConfig = (lib.mkMerge
     (lib.forEach vhostDomains (domain: {
