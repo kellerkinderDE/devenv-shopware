@@ -185,8 +185,6 @@ in {
 
     enterShell = ''
       versionCheck
-
-      ${pkgs.caddy}/bin/caddy trust 2> /dev/null
     '';
 
     # Environment variables

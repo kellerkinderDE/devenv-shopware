@@ -16,8 +16,6 @@ let
 
       root * ${cfg.projectRoot}/${cfg.documentRoot}
 
-      encode zstd gzip
-
       @fallbackMediaPaths {
         path ${cfg.fallbackMediaPaths}
       }
