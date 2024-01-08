@@ -217,6 +217,7 @@ in {
         SHOPWARE_CACHE_ID = "dev";
 
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
+        NPM_CONFIG_ENGINE_STRICT = "false"; # hotfix for npm10
       })
       (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
