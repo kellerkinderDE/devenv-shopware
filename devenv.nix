@@ -2,7 +2,7 @@
 let
   cfg = config.kellerkinder;
 
-  currentVersion = "v1.0.2";
+  currentVersion = "v2.0.0";
 
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
