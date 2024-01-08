@@ -151,13 +151,6 @@ in {
       description = ''Sets the HTTPS port'';
       default = "443";
     };
-
-    customDomains = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      description = ''Sets a list of domains (needs additional entries in the hosts)'';
-      default = [];
-      example = [ "mylocal.domain" "kellerkinder.local" ];
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -213,8 +206,8 @@ in {
         MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
         MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-        APP_URL = lib.mkDefault "http://127.0.0.1";
-        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1";
+        APP_URL = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
 
         APP_SECRET = lib.mkDefault "devsecret";
 
