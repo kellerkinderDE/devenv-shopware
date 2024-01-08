@@ -165,3 +165,23 @@ Enables the MySQL Binary Log and adds configuration for it.
 ```
 kellerkinder.enableMysqlBinLog = false;
 ```
+
+# kellerkinder.httpPort
+Sets the http port for caddy.
+
+_This has to be a string_
+
+*_Example_*
+```
+kellerkinder.httpPort = "8080";
+```
+
+# kellerkinder.httpsPort
+Sets the https port for caddy.
+
+_This has to be a string_
+
+*_Example_*
+```
+kellerkinder.httpsPort = "8443";
+```
