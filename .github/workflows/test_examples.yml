@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: set-matrix
-        run: echo "matrix=$(ls examples/ | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        run: echo "matrix=$(ls ${GITHUB_WORKSPACE}/examples/ | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
   test_examples:
     needs: list-examples
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
       - name: Test ${{ matrix.manifest }} example
         run: |
           cd ${GITHUB_WORKSPACE}/examples/${{ matrix.manifest }}
-          sed -i "s,kellerkinderDE/devenv-shopware?ref=v1.0.2,${GITHUB_REPOSITORY}?ref=${GITHUB_REF_NAME}," devenv.yaml
+          sed -i "s,url: github:kellerkinderDE/devenv-shopware?ref=v1.0.3,url: path:${GITHUB_WORKSPACE}," devenv.yaml
           echo running on ${GITHUB_REPOSITORY} with ref ${GITHUB_REF_NAME}
           direnv allow && direnv reload
           devenv ci -vvv

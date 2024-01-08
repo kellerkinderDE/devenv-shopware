@@ -2,7 +2,7 @@
 let
   cfg = config.kellerkinder;
 
-  currentVersion = "v1.0.2";
+  currentVersion = "v1.0.3";
 
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
@@ -205,6 +205,7 @@ in {
         SHOPWARE_CACHE_ID = "dev";
 
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
+        NPM_CONFIG_ENGINE_STRICT = "false"; # hotfix for npm10
       })
       (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
