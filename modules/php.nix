@@ -20,7 +20,7 @@ let
       opcache.memory_consumption = 256M
       opcache.interned_strings_buffer = 20
       opcache.enable_cli = 1
-      opcache.enabled = 1
+      opcache.enable = 1
       zend.assertions = 0
       short_open_tag = 0
       xdebug.mode = "debug"
