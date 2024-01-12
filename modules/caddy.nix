@@ -68,13 +68,10 @@ let
 
   caddyHostConfig = (lib.mkMerge
     (lib.forEach vhostDomains (domain: {
-      "http://${toString domain}" = {
+      "http://${toString domain}:${toString cfg.httpPort}" = lib.mkDefault {
         extraConfig = vhostConfig;
       };
-      "https://${toString domain}" = {
-        extraConfig = vhostConfigTls;
-      };
-      "https://${toString domain}:8000" = {
+      "https://${toString domain}:${toString cfg.httpsPort}" = lib.mkDefault {
         extraConfig = vhostConfigTls;
       };
     }))
