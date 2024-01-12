@@ -2,7 +2,7 @@
 let
   cfg = config.kellerkinder;
 
-  currentVersion = "v1.0.2";
+  currentVersion = "v2.0.0";
 
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
@@ -136,8 +136,20 @@ in {
 
     enableMysqlBinLog = lib.mkOption {
       type = lib.types.bool;
-      default = false;
       description = ''Enables MySQL binary logs'';
+      default = false;
+    };
+
+    httpPort = lib.mkOption {
+      type = lib.types.str;
+      description = ''Sets the HTTP port'';
+      default = "80";
+    };
+
+    httpsPort = lib.mkOption {
+      type = lib.types.str;
+      description = ''Sets the HTTPS port'';
+      default = "443";
     };
   };
 
@@ -194,8 +206,8 @@ in {
         MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
         MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
 
-        APP_URL = lib.mkDefault "http://127.0.0.1";
-        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1";
+        APP_URL = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
+        CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
 
         APP_SECRET = lib.mkDefault "devsecret";
 
@@ -205,6 +217,7 @@ in {
         SHOPWARE_CACHE_ID = "dev";
 
         NODE_OPTIONS = "--openssl-legacy-provider --max-old-space-size=2000";
+        NPM_CONFIG_ENGINE_STRICT = "false"; # hotfix for npm10
       })
       (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
