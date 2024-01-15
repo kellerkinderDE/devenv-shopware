@@ -7,6 +7,11 @@ inputs:
   kellerkinder:
     url: github:kellerkinderDE/devenv-shopware?ref=v2.0.0
     flake: false
+  froshpkgs:
+    url: github:FriendsOfShopware/nur-packages
+    inputs:
+      nixpkgs:
+        follows: "nixpkgs"
   phps:
     url: github:fossar/nix-phps
     inputs:

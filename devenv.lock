@@ -67,6 +67,26 @@
         "type": "github"
       }
     },
+    "froshpkgs": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1705307227,
+        "narHash": "sha256-Pl3hb7Ez+37jEF0jpU8XcBy7fdkrRLux1x34MCajn1k=",
+        "owner": "FriendsOfShopware",
+        "repo": "nur-packages",
+        "rev": "aec312a79438652bda0894e32b424773bbbcd11b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "FriendsOfShopware",
+        "repo": "nur-packages",
+        "type": "github"
+      }
+    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -169,6 +189,7 @@
     "root": {
       "inputs": {
         "devenv": "devenv",
+        "froshpkgs": "froshpkgs",
         "nixpkgs": "nixpkgs",
         "phps": "phps",
         "pre-commit-hooks": "pre-commit-hooks"

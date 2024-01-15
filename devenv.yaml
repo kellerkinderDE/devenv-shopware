@@ -3,6 +3,11 @@ allowUnfree: true
 inputs:
   nixpkgs:
     url: github:NixOS/nixpkgs/nixos-unstable
+  froshpkgs:
+    url: github:FriendsOfShopware/nur-packages
+    inputs:
+      nixpkgs:
+        follows: "nixpkgs"
   phps:
     url: github:fossar/nix-phps
     inputs:
