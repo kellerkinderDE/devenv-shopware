@@ -20,6 +20,7 @@ in {
             key_buffer_size = 16777216;
             max_allowed_packet = 134217728;
             table_open_cache = 1024;
+            port = cfg.mysqlPort;
           })
           (lib.mkIf (cfg.enableMysqlBinLog) {
             sync_binlog = 0;
