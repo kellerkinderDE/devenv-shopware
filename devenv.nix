@@ -2,10 +2,14 @@
 let
   cfg = config.kellerkinder;
 
-  currentVersion = "v2.0.0";
+  currentVersion = "v2.0.1";
 
   listEntries = path:
     map (name: path + "/${name}") (builtins.attrNames (builtins.readDir path));
+
+  shopwareCliPackage = if builtins.hasAttr "froshpkgs" inputs
+      then inputs.froshpkgs.packages.${pkgs.system}.shopware-cli
+      else pkgs.shopware-cli;
 in {
   imports = [
     (lib.mkRenamedOptionModule [ "kellerkinder" "fallbackRedirectMediaUrl" ] [ "kellerkinder" "fallbackMediaUrl" ])
@@ -157,7 +161,7 @@ in {
     packages = [
       pkgs.jq
       pkgs.gnupatch
-      inputs.froshpkgs.packages.${pkgs.system}.shopware-cli
+      shopwareCliPackage
     ] ++ cfg.additionalPackages;
 
     languages.javascript = {

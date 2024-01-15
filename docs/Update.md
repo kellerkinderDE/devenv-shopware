@@ -1,6 +1,20 @@
 # Updates
 
-
+## v2.0.1
+* We support now the newest version of [shopware-cli](https://github.com/FriendsOfShopware/shopware-cli/releases), which be installed directly. To do this, you just need to adjust the following in your `devenv.yaml`
+  ```yml
+    ...
+    kellerkinder:
+      url: github:kellerkinderDE/devenv-shopware?ref=v2.0.1
+      flake: false
+    ...
+    froshpkgs:
+      url: github:FriendsOfShopware/nur-packages
+      inputs:
+        nixpkgs:
+          follows: "nixpkgs"
+    ...
+  ```
 ## v2.0.0
 * If you still want to use custom ports, take a look at the [options](Options.md#kellerkinder-httpPort).
 * You have to adjust your `devenv.yaml` to
