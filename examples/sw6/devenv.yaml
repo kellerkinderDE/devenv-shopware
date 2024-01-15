@@ -3,7 +3,7 @@ imports:
   - kellerkinder
 inputs:
   nixpkgs:
-    url: github:NixOS/nixpkgs/nixos-unstable
+    url: github:NixOS/nixpkgs?ref=23.11
   kellerkinder:
     url: github:kellerkinderDE/devenv-shopware?ref=v2.0.0
     flake: false
