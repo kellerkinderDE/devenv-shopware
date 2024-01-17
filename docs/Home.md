@@ -33,3 +33,23 @@ As mentioned in the features section, devenv is shipped with Xdebug. You need to
 This also works great when having to debug API requests, e.g. in Insomnia.
 
 For the CLI, you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
+
+
+# MySQL Configuration
+
+The configuration is based on recommendations from Shopware. You can find the documentation [here](https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html#mysql-configuration).
+By default, we change the following configurations:
+
+| setting              | value                                                                                              | description                                                                                                                 |
+|----------------------|----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| group_concat_max_len | 32000                                                                                              | Shopware highly uses GROUP_CONCAT functions within the Database. This setting ensures, that all queries will run correctly. |
+| key_buffer_size      | 16777216                                                                                           | Defines, how many index buffers can be held in memory                                                                       |
+| max_allowed_packet   | 134217728                                                                                          | Defines, how much data can be send within one request before the server blocks it.                                          |
+| table_open_cache     | 1024                                                                                               | Shopware uses many tables, This settings allows the server to keep more tables open                                         |
+| sql_mode             | STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | the default from MySQL, but without ONLY_FULL_GROUP_BY                                                                      |
+
+
+# Environment variables
+
+We're setting some environment variables as default.
+As example, we're setting SQL_SET_DEFAULT_SESSION_VARIABLES default to `O`, since we're having the shopware recommended configuration for the database.

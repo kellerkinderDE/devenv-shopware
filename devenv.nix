@@ -280,6 +280,8 @@ in {
         APP_URL = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
         CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
 
+        SQL_SET_DEFAULT_SESSION_VARIABLES = lib.mkDefault "0";
+
         APP_SECRET = lib.mkDefault "devsecret";
 
         PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = true;
