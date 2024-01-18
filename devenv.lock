@@ -3,11 +3,11 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1705094340,
-        "narHash": "sha256-T7d1d5PQXqDbZUnKjRTBf26yTCMSttDQULM8jU4jiro=",
+        "lastModified": 1705399223,
+        "narHash": "sha256-2nhAJ/9LMlwaEZDnoDIhnhQ0pEC/YIIt09WD7FmTp6g=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "96b49eb381779bdd4f41ca176a762867c31db5da",
+        "rev": "ff37923d4ba9e220b9826594e83fc29e1a4f4338",
         "type": "github"
       },
       "original": {
@@ -74,11 +74,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1705307227,
-        "narHash": "sha256-Pl3hb7Ez+37jEF0jpU8XcBy7fdkrRLux1x34MCajn1k=",
+        "lastModified": 1705521055,
+        "narHash": "sha256-SK2a4naKyXVmkDzwxUV7GnMJd7V0vBVJj6tokvny+fs=",
         "owner": "FriendsOfShopware",
         "repo": "nur-packages",
-        "rev": "aec312a79438652bda0894e32b424773bbbcd11b",
+        "rev": "a055722cf9123a0ac0e95bfa69c092c25ff26755",
         "type": "github"
       },
       "original": {
@@ -110,16 +110,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1701282334,
-        "narHash": "sha256-MxCVrXY6v4QmfTwIysjjaX0XUhqBbxTWWB4HXtDYsdk=",
+        "lastModified": 1705331948,
+        "narHash": "sha256-qjQXfvrAT1/RKDFAMdl8Hw3m4tLVvMCc8fMqzJv0pP4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "057f9aecfb71c4437d2b27d3323df7f93c010b7e",
+        "rev": "b8dd8be3c790215716e7c12b247f45ca525867e2",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "23.11",
+        "ref": "nixos-23.11",
         "repo": "nixpkgs",
         "type": "github"
       }

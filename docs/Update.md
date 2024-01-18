@@ -1,11 +1,11 @@
 # Updates
 
-## v2.0.1
+## v2.1.0
 * We support now the newest version of [shopware-cli](https://github.com/FriendsOfShopware/shopware-cli/releases), which be installed directly. To do this, you just need to adjust the following in your `devenv.yaml`
   ```yml
     ...
     kellerkinder:
-      url: github:kellerkinderDE/devenv-shopware?ref=v2.0.1
+      url: github:kellerkinderDE/devenv-shopware?ref=v2.1.0
       flake: false
     ...
     froshpkgs:
