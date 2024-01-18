@@ -19,7 +19,7 @@ jobs:
           regex: true
           include: "docs/*.md"
       - name: Upload Docs to Wiki
-        if: github.ref_name == 'main'
+        if: github.ref_type == 'tag'
         uses: docker://decathlon/wiki-page-creator-action:latest
         env:
           GH_PAT: ${{ secrets.WIKI_ACTION_TOKEN_ServiceUser }}
