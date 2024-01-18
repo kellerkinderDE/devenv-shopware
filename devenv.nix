@@ -141,15 +141,75 @@ in {
     };
 
     httpPort = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.int;
       description = ''Sets the HTTP port'';
-      default = "80";
+      default = 80;
     };
 
     httpsPort = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.int;
       description = ''Sets the HTTPS port'';
-      default = "443";
+      default = 443;
+    };
+
+    mysqlPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the MySQL port'';
+      default = 3306;
+    };
+
+    adminerPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Adminer port'';
+      default = 8010;
+    };
+
+    mailhogApiPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Mailhog API port'';
+      default = 8025;
+    };
+
+    mailhogSmtpPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Mailhog SMTP port'';
+      default = 1025;
+    };
+
+    mailhogUiPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Mailhog Web UI port'';
+      default = 8025;
+    };
+
+    redisPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Redis port'';
+      default = 6379;
+    };
+
+    elasticsearchPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Elasticsearch/OpenSearch port'';
+      default = 9200;
+    };
+
+    elasticsearchTcpPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the Elasticsearch/OpenSearch TCP port'';
+      default = 9300;
+    };
+
+    rabbitMqPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the RabbitMQ port'';
+      default = 5672;
+    };
+
+    rabbitMqManagementPluginPort = lib.mkOption {
+      type = lib.types.int;
+      description = ''Sets the RabbitMQ management plugin port'';
+      default = 15672;
     };
   };
 
@@ -166,17 +226,28 @@ in {
     };
 
     services.redis.enable = lib.mkDefault true;
+    services.redis.port = cfg.redisPort;
 
     services.adminer.enable = lib.mkDefault true;
-    services.adminer.listen = lib.mkDefault "127.0.0.1:8010";
+    services.adminer.listen = lib.mkDefault "127.0.0.1:${toString cfg.adminerPort}";
 
     services.mailhog.enable = true;
+    services.mailhog.apiListenAddress = lib.mkDefault "127.0.0.1:${toString cfg.mailhogApiPort}";
+    services.mailhog.smtpListenAddress = lib.mkDefault "127.0.0.1:${toString cfg.mailhogSmtpPort}";
+    services.mailhog.uiListenAddress = lib.mkDefault "127.0.0.1:${toString cfg.mailhogUiPort}";
 
     services.elasticsearch.enable = cfg.enableElasticsearch;
+    services.elasticsearch.port = cfg.elasticsearchPort;
+    services.elasticsearch.tcp_port = cfg.elasticsearchTcpPort;
+
     services.opensearch.enable = cfg.enableOpenSearch;
+    services.opensearch.settings."http.port" = cfg.elasticsearchPort;
+    services.opensearch.settings."transport.port" = cfg.elasticsearchTcpPort;
 
     services.rabbitmq.enable = cfg.enableRabbitMq;
     services.rabbitmq.managementPlugin.enable = cfg.enableRabbitMq;
+    services.rabbitmq.port = cfg.rabbitMqPort;
+    services.rabbitmq.managementPlugin.port= cfg.rabbitMqManagementPluginPort;
 
     dotenv.disableHint = true;
 
@@ -202,9 +273,9 @@ in {
     # Environment variables
     env = lib.mkMerge [
       (lib.mkIf cfg.enable {
-        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:3306/shopware";
-        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
-        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:1025?encryption=&auth_mode=";
+        DATABASE_URL = lib.mkDefault "mysql://shopware:shopware@127.0.0.1:${toString cfg.mysqlPort}/shopware";
+        MAILER_URL = lib.mkDefault "smtp://127.0.0.1:${toString cfg.mailhogSmtpPort}?encryption=&auth_mode=";
+        MAILER_DSN = lib.mkDefault "smtp://127.0.0.1:${toString cfg.mailhogSmtpPort}?encryption=&auth_mode=";
 
         APP_URL = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
         CYPRESS_baseUrl = lib.mkDefault "http://127.0.0.1:${toString cfg.httpPort}";
@@ -224,14 +295,15 @@ in {
       (lib.mkIf (config.services.elasticsearch.enable || config.services.opensearch.enable) {
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
-        SHOPWARE_ES_HOSTS = "127.0.0.1";
+        SHOPWARE_ES_HOSTS = "127.0.0.1:${toString cfg.elasticsearchPort}";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
       })
       (lib.mkIf config.services.rabbitmq.enable {
         RABBITMQ_NODENAME = "rabbit@localhost"; # 127.0.0.1 can't be used as rabbitmq can't set short node name
+        RABBITMQ_NODE_PORT = "${toString cfg.rabbitMqPort}";
       })
       (lib.mkIf config.services.redis.enable {
-        REDIS_DSN = "redis://127.0.0.1:6379";
+        REDIS_DSN = "redis://127.0.0.1:${toString cfg.redisPort}";
       })
     ];
   };
