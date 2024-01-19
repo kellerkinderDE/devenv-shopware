@@ -2,5 +2,8 @@
 
 # Devenv
 /.devenv*
-/.direnv
-devenv.local.nix
+/examples/**/.devenv*
+/examples/**/.direnv
+/examples/**/devenv.lock
+/examples/**/.devenv.flake.nix
+

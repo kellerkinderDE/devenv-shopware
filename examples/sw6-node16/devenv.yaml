@@ -3,10 +3,15 @@ imports:
   - kellerkinder
 inputs:
   nixpkgs:
-    url: github:NixOS/nixpkgs?ref=nixos-23.11
+    url: github:NixOS/nixpkgs?ref=nixos-23.05
   kellerkinder:
     url: github:kellerkinderDE/devenv-shopware?ref=v2.1.0
     flake: false
+  froshpkgs:
+    url: github:FriendsOfShopware/nur-packages
+    inputs:
+      nixpkgs:
+        follows: "nixpkgs"
   phps:
     url: github:fossar/nix-phps
     inputs:
