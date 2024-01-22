@@ -16,10 +16,12 @@ in {
       settings = {
         mysqld = lib.mkMerge [
           (lib.mkIf cfg.enable {
-            group_concat_max_len = 2048;
+            group_concat_max_len = 32000;
             key_buffer_size = 16777216;
             max_allowed_packet = 134217728;
             table_open_cache = 1024;
+            port = cfg.mysqlPort;
+            sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION";
           })
           (lib.mkIf (cfg.enableMysqlBinLog) {
             sync_binlog = 0;
