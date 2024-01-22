@@ -55,6 +55,7 @@ By default, we change the following configurations:
 | `cc`          | Runs the shopware cache:clear comamnd - works in every subdirectory              |
 | `uuid`        | Generates a valid uuid v4 and displays it                                        |                                                                                                                 |
 | `caddy-trust` | Trusts the current SSL certificates from caddy to prevent certification warnings |    
+| `debug`       | Runs the following php command with xdebug enabled: `debug bin/console test`     |    
 
 # Environment variables
 
