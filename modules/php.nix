@@ -15,6 +15,8 @@ let
       display_startup_errors = true
       error_reporting = E_ALL
       html_errors = true
+      max_execution_time = 60
+      max_input_time = 60
       assert.active = 0
       zend.detect_unicode = 0
       opcache.memory_consumption = 256M

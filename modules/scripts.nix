@@ -19,6 +19,10 @@ let
       ${pkgs.coreutils}/bin/sleep 1
     done
 
+    if [[ "${lib.boolToString cfg.enableElasticsearch}" == "true" || "${lib.boolToString cfg.enableOpenSearch}" == "true" ]]; then
+      ${pkgs.wait4x}/bin/wait4x http http://localhost:9200/_cluster/health --expect-status-code 200 --timeout 100s
+    fi
+
     TABLE=$(mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
 
     if [[ $TABLE == "" ]]; then
@@ -137,6 +141,12 @@ in {
     ${scriptUpdateConfig}
   '';
 
+  scripts.caddy-trust.exec = ''
+    ${config.services.caddy.package}/bin/caddy trust
+  '';
+
   # Processes
-  processes.entryscript.exec = "${entryScript}";
+  processes.entryscript.exec = ''
+    ${entryScript}
+  '';
 }
