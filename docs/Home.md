@@ -50,12 +50,12 @@ By default, we change the following configurations:
 
 # Built in commands
 
-| Command       | Description                                                                      | Example                    |
-|---------------|----------------------------------------------------------------------------------|----------------------------|
-| `cc`          | Runs the shopware cache:clear comamnd - works in every subdirectory              | `> cc`                     |
-| `uuid`        | Generates a valid uuid v4 and displays it                                        | `> uuid \| pbcopy`         |
-| `caddy-trust` | Trusts the current SSL certificates from caddy to prevent certification warnings | `> caddy-trust`            |
-| `debug`       | Runs the following php command with xdebug enabled                               | `> debug bin/console test` |
+| Command       | Description                                                                                                                        | Example                                 |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `cc`          | Runs the shopware cache:clear comamnd - works in every subdirectory                                                                | `> devenv shell cc`                     |
+| `uuid`        | Generates a valid uuid v4 and displays it                                                                                          | `> devenv shell uuid \| pbcopy`         |
+| `caddy-trust` | Trusts the current SSL certificates from caddy to prevent certification warnings. Caddy is required to be running in another shell | `> devenv shell caddy-trust`            |
+| `debug`       | Runs the following php command with xdebug enabled                                                                                 | `> devenv shell debug bin/console test` |
 
 # Environment variables
 
