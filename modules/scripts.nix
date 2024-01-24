@@ -141,12 +141,12 @@ in {
     ${scriptUpdateConfig}
   '';
 
+  scripts.caddy-trust.exec = ''
+    ${config.services.caddy.package}/bin/caddy trust
+  '';
+
   # Processes
   processes.entryscript.exec = ''
     ${entryScript}
-  '';
-
-  scripts.caddy-trust.exec = ''
-    ${config.services.caddy.package}/bin/caddy trust
   '';
 }

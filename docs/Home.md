@@ -35,12 +35,12 @@ This also works great when having to debug API requests, e.g. in Insomnia.
 
 For the CLI, you can use the integrated debug helper `debug` by simply adding it before your CLI commands, e.g. `debug bin/console`.
 
-# MySQL Configuration
+# MySQL configuration
 
 The configuration is based on recommendations from Shopware. You can find the documentation [here](https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html#mysql-configuration).
 By default, we change the following configurations:
 
-| Setting              | Value                                                                                              | description                                                                                                                 |
+| Setting              | Value                                                                                              | Description                                                                                                                 |
 |----------------------|----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | group_concat_max_len | 32000                                                                                              | Shopware highly uses GROUP_CONCAT functions within the Database. This setting ensures, that all queries will run correctly. |
 | key_buffer_size      | 16777216                                                                                           | Defines, how many index buffers can be held in memory                                                                       |
@@ -48,14 +48,14 @@ By default, we change the following configurations:
 | table_open_cache     | 1024                                                                                               | Shopware uses many tables, This settings allows the server to keep more tables open                                         |
 | sql_mode             | STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION | the default from MySQL, but without ONLY_FULL_GROUP_BY                                                                      |
 
-# Built in Commands
+# Built in commands
 
-| Command       | Description                                                                      |
-|---------------|----------------------------------------------------------------------------------|
-| `cc`          | Runs the shopware cache:clear comamnd - works in every subdirectory              |
-| `uuid`        | Generates a valid uuid v4 and displays it                                        |                                                                                                                 |
-| `caddy-trust` | Trusts the current SSL certificates from caddy to prevent certification warnings |    
-| `debug`       | Runs the following php command with xdebug enabled: `debug bin/console test`     |    
+| Command       | Description                                                                      | Example                    |
+|---------------|----------------------------------------------------------------------------------|----------------------------|
+| `cc`          | Runs the shopware cache:clear comamnd - works in every subdirectory              | `> cc`                     |
+| `uuid`        | Generates a valid uuid v4 and displays it                                        | `> uuid \| pbcopy`         |
+| `caddy-trust` | Trusts the current SSL certificates from caddy to prevent certification warnings | `> caddy-trust`            |
+| `debug`       | Runs the following php command with xdebug enabled                               | `> debug bin/console test` |
 
 # Environment variables
 
