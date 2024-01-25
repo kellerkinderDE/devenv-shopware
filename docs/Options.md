@@ -207,7 +207,7 @@ kellerkinder.adminerPort = 8010;
 ```
 
 # kellerkinder.mailhogApiPort
-ets the Mailhog API port.
+Sets the Mailhog API port.
 
 _This has to be an int_
 
