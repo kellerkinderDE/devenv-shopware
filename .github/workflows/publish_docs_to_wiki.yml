@@ -3,7 +3,7 @@ name: Publish docs to Wiki
 on:
   push:
     tags:
-      - *
+      - '**'
   workflow_dispatch:
 
 jobs:
