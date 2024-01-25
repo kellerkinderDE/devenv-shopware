@@ -3,3 +3,7 @@
 # Devenv
 /.devenv*
 /devenv.lock
+/examples/**/.devenv*
+/examples/**/.direnv
+/examples/**/devenv.lock
+/examples/**/.devenv.flake.nix
