@@ -15,8 +15,8 @@
           follows: "nixpkgs"
     ...
   ```
-* Following configurations type have been changed from `string` to `ìnt`: `kellerkinder.httpPort` and `kellerkinder.httpsPort`
-* Due to stability, we use stable branch `nixos-23.11` instead of `nixos-unstable` in our examples
+* The following configuration types have been changed from `string` to `ìnt`: `kellerkinder.httpPort` and `kellerkinder.httpsPort`
+* For stability reasons, we use the stable branch `nixos-23.11` instead of `nixos-unstable` in our examples.
 
 ## v2.0.0
 * If you still want to use custom ports, take a look at the [options](Options.md#kellerkinder-httpPort).
