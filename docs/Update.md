@@ -21,7 +21,7 @@
 
 ## v2.0.0
 * We changed the default ports for `http` to `80` and `https` to `443`
-  * If you still want to use custom ports, take a look at the [options](Options.md#kellerkinder-httpPort).
+  * If you still want to use custom ports, take a look at the [options](Options/Ports.md#kellerkinder-httpPort).
 * You have to adjust your `devenv.yaml` to
   ```yml
     ...
