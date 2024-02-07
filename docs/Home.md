@@ -13,6 +13,8 @@ Add the following files to the project `.gitignore` file:
 # Options
 A full list of options can be found [here](Options.md).
 
+If you encounter errors with the standard http/https ports, you should adjust these via the [options](Options-Ports.md).
+
 # Different PHP versions
 If you want to use a specific PHP version, you can set the following versions
 in your project `devenv.nix` file. The php.ini configuration is >php80 specific
