@@ -96,6 +96,7 @@ in {
         SHOPWARE_ES_ENABLED = "1";
         SHOPWARE_ES_INDEXING_ENABLED = "1";
         SHOPWARE_ES_HOSTS = "127.0.0.1:${toString cfg.elasticsearchPort}";
+        OPENSEARCH_URL = "127.0.0.1:${toString cfg.elasticsearchPort}";
         SHOPWARE_ES_THROW_EXCEPTION = "1";
       })
       (lib.mkIf config.services.rabbitmq.enable {
