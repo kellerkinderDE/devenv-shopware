@@ -23,7 +23,7 @@ let
       ${pkgs.wait4x}/bin/wait4x http http://localhost:9200/_cluster/health --expect-status-code 200 --timeout 100s
     fi
 
-    TABLE=$(mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
+    TABLE=$($DEVENV_PROFILE/bin/mysql shopware -s -N -e 'SHOW TABLES LIKE "system_config";')
 
     if [[ $TABLE == "" ]]; then
       echo "Table system_config is missing. Run >updateSystemConfig< manually to ensure the dev status of your setup!"
