@@ -23,6 +23,16 @@ A description about the setup and usage can be found in the [Wiki](https://githu
 ### Update
 To update your devenv config to the latest version, simply follow the update instructions for the new version in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki/Update)
 
+### Default values
+#### MySQL
+The default values for MySQL are:
+
+| Type          | Value      |
+|---------------|------------|
+| User          | `shopware` |
+| Password      | `shopware` |
+| Database name | `shopware` |
+
 ## More Information:
 - https://devenv.sh/
 - https://developer.shopware.com/docs/guides/installation/devenv
