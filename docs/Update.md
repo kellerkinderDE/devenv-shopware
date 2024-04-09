@@ -1,5 +1,16 @@
 # Updates
 
+## v2.2.0
+* You have to adjust your `devenv.yaml` to
+  ```yml
+    ...
+    kellerkinder:
+      url: github:kellerkinderDE/devenv-shopware?ref=v2.2.0
+      flake: false
+    ...
+  ```
+* If you want to run multiple projects at the same time, you may have to consider adding `process.implementation = "honcho";` to your `devenv.nix` as the default [process manager in devenv](https://devenv.sh/reference/options/#processimplementation) has changed.  
+
 ## v2.1.0
 * We support now the newest version of [shopware-cli](https://github.com/FriendsOfShopware/shopware-cli/releases), which be installed directly. To do this, you just need to adjust the following in your `devenv.yaml`
   ```yml
