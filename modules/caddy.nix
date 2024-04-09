@@ -83,6 +83,7 @@ in {
       config = ''
         {
           auto_https disable_redirects
+          skip_install_trust
         }
       '';
       virtualHosts = caddyHostConfig;
