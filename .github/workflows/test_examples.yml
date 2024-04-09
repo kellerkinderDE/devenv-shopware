@@ -14,7 +14,7 @@ on:
       - devenv.yaml
 
 env:
-  DEVENV_VERSION: v0.6.3
+  DEVENV_VERSION: v1.0.3
 
 jobs:
   list-examples:
@@ -45,7 +45,7 @@ jobs:
       - name: Test ${{ matrix.manifest }} example
         run: |
           cd ${GITHUB_WORKSPACE}/examples/${{ matrix.manifest }}
-          sed -i "s,url: github:kellerkinderDE/devenv-shopware?ref=v2.1.1,url: path:${GITHUB_WORKSPACE}," devenv.yaml
+          sed -i "s,url: github:kellerkinderDE/devenv-shopware?ref=v[.0-9]\+,url: path:${GITHUB_WORKSPACE}," devenv.yaml
           echo running on ${GITHUB_REPOSITORY} with ref ${GITHUB_REF_NAME}
           direnv allow && direnv reload
           devenv ci -vvv
