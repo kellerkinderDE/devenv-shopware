@@ -5,7 +5,7 @@ inputs:
   nixpkgs:
     url: github:NixOS/nixpkgs/nixos-23.11
   kellerkinder:
-    url: github:kellerkinderDE/devenv-shopware?ref=v2.1.1
+    url: github:kellerkinderDE/devenv-shopware?ref=v2.2.0
     flake: false
   phps:
     url: github:fossar/nix-phps

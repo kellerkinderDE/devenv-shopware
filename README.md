@@ -15,10 +15,16 @@ tightly tailored to the needs of our team members working on various projects wi
 - Pre-installed [shopware-cli](https://sw-cli.fos.gg/)
 
 ## Requirements
-* devenv: `v0.6.3` or higher
+* devenv: `v1.0.3` or higher
 
 ## Setup & Usage
 A description about the setup and usage can be found in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki).
+
+### Multiple Projects
+If you want to run multiple projects at same time, you may need to choose a different `process.implementation` instead of `process-compose`.
+This would be possible by adding `process.implementation = "honcho";` to your `devenv.nix`.
+
+A complete list of possible options can be found [here](https://devenv.sh/reference/options/#processimplementation)
 
 ### Update
 To update your devenv config to the latest version, simply follow the update instructions for the new version in the [Wiki](https://github.com/kellerkinderDE/devenv-shopware/wiki/Update)
