@@ -48,5 +48,5 @@ jobs:
           sed -i "s,url: github:kellerkinderDE/devenv-shopware?ref=v[.0-9]\+,url: path:${GITHUB_WORKSPACE}," devenv.yaml
           echo running on ${GITHUB_REPOSITORY} with ref ${GITHUB_REF_NAME}
           direnv allow && direnv reload
-          devenv test -vvv
+          devenv test
           devenv shell echo ok
